@@ -1,0 +1,82 @@
+.color-def {
+  color: #1D4378
+}
+
+.header-box {
+  background: #eaeaea ;
+  color: #1D4378;
+  font-weight: bold;
+  /* font-family: cario; */
+}
+
+.logo-title {
+  /* background: #eaeaea ; */
+  color: #1D4378;
+  font-weight: bold;
+  font-family: gesstwo;
+}
+
+.sub-title {
+  background: #eaeaea ;
+  font-weight: bold;
+  font-family: cairo;
+}
+
+.dif {
+  font-family: gesstv;
+}
+
+/* .main-brand {
+  color: #1D4378;   */
+  /* font-family: Tajawal; */
+  /* font-family: Amiri Bold; */
+  /* font-family: cairo black; */
+  /* font-family: GE SS Two;
+  font-weight: bolder;
+} */
+
+.nav-item {
+  font-family: cairo;
+  font-weight: bolder;
+  /* color:#f9c919; */
+  color: white;
+  text-shadow: 2px 2px 0px black;
+}
+
+.nav-item:hover {
+  color: orange;
+}
+
+.auth-button1 {
+  /* margin-left: 100px; */
+  border: 2px solid #ffa500;
+}
+
+.auth-button2 {
+  border: 2px solid #ffa500;
+}
+
+
+.auth-button1:hover {
+  background: #ffa600;
+  color: white;
+}
+
+.auth-button2:hover {
+  color: white;
+}
+
+/* //////////////////////////// */
+/* old use */
+.custom-box {
+  background-color: var(--my-color, #4f46e5);
+  color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+
+.warning-text {
+  background-color: var(--my-color, #03c703);
+  color: #f87171;
+  font-weight: bold;
+}

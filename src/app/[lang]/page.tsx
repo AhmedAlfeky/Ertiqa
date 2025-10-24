@@ -13,6 +13,12 @@ export default function LandingPage() {
           <h1 className="text-white text-4xl md:text-6xl font-bold">
               <p className="dif text-5xl translate-x-[-35%] translate-y-[250%]">منصة تعليمية تفاعلية</p>
               <p className="dif text-4xl text-amber-300 translate-x-[-19%] translate-y-[450%]">دورات  .  بودكاست  .  فعاليات  .  مدونة  .  كتب</p>
+              <a href="https://www.google.com" target="_blank" rel="noopener noreferrer">
+                <button className="btn flex items-center justify-center gap-3 w-60 h-15 text-amber-300 transition duration-600 ease translate-x-[-115%] translate-y-[500%]">
+                    ابدأ تجربتك معنا
+                  <img src="/images/arw.png" alt="arw" className="arw object-contain w-10 h-10"/>
+                </button>
+              </a>
           </h1>
         </div>
       </section>

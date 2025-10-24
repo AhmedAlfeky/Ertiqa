@@ -24,7 +24,7 @@ export default function Header({ lang }: { lang: string }) {
         {/* الجزء العلوي: الشعار + معلومات الاتصال */}
         <div className="flex flex-col md:flex-row md:justify-between">
           {/* الشعار */}
-          <Link href={`/${lang}`} className="flex items-center translate-x-[-100px] translate-y-[4px]">
+          <Link href={`/${lang}`} className="flex items-center translate-x-[-100px] translate-y-1">
             <img src="/images/logo/logo.png" alt="إرتقاء - منصة تعليمية" className="w-20 h-20 object-contain" />
             <div>
               <div className="logo-title text-5xl translate-x-[-20px] translate-y-[12%]">إرتقـاء</div>
@@ -33,7 +33,7 @@ export default function Header({ lang }: { lang: string }) {
           </Link>
           
           {/* معلومات الاتصال (مخفي على الجوال الصغير) */}
-          <div className="hidden sm:flex flex-wrap items-center translate-x-[-40px] translate-y-[5px] gap-5 text-sm">
+          <div className="hidden sm:flex flex-wrap items-center translate-y-[5px] gap-5 text-sm">
 
             {/* البريد */}
             <div className="flex items-center gap-2">
@@ -63,23 +63,30 @@ export default function Header({ lang }: { lang: string }) {
           </div>
 
             {/* سلة المشتريات */}
-            {/* <Link href="/cart" className="text-2xl">
+            {/* <Link href="/cart" className="text-2xl translate-x-[-370px] translate-y-[6px]">
               🛒
             </Link> */}
+
+            <div className="absolute left-[100px] top-2">
+                <a href="https://www.google.com/" className="flex items-center gap-3" target="_blank" rel="noopener noreferrer">
+                <img src="/images/cart-emp.png" alt="cart" className="cart"/>
+                <span className="cart-text text-sm text-[#1D4378]">الاشتراكات</span>
+                </a>
+            </div>
 
             {/* أزرار التسجيل */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between">
             
             {/* أزرار التسجيل */}
-            <div className="flex gap-2 mt-3 md:mt-0 translate-x-[100px] translate-y-[20px]">
+            <div className="flex gap-2 mt-3 md:mt-0 translate-x-[100px] translate-y-5">
               <Link
                 href={`/${lang}/login?mode=signup`}
-                className="auth-button2 w-27 h-8 flex items-center justify-center rounded-tr-2xl font-bold text-base transition duration-300 ease-in-out shadow-sm focus:outline-none bg-[#ffa600]" >
+                className="auth-button2 w-22 h-8 flex bg-amber-100 items-center justify-center text-[12px] rounded-lg font-bold transition duration-300 ease-in-out focus:outline-none" >
                 {lang === 'ar' ? 'إنشاء حساب' : 'Sign Up'}
               </Link>
               <Link
                 href={`/${lang}/login?mode=login`}
-                className="auth-button1 w-27 h-8 flex items-center justify-center rounded-tl-2xl font-bold text-base transition duration-200 ease-in-out shadow-sm focus:outline-none" >
+                className="auth-button1 w-22 h-8 flex items-center justify-center text-[12px] rounded-lg font-bold transition duration-200 ease-in-out focus:outline-none" >
                 {lang === 'ar' ? 'تسجيل الدخول' : 'Login'}
               </Link>
             </div>

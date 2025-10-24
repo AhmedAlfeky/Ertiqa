@@ -24,8 +24,9 @@ export function middleware(request: NextRequest) {
 
   // إذا لم تكن اللغة في المسار، وجّه إلى اللغة الافتراضية
   if (pathnameIsMissingLocale) {
-    const locale = getLocaleFromRequest(request) || defaultLocale;
-    return NextResponse.redirect(new URL(`/${locale}${pathname}`, request.url));
+    // const locale = getLocaleFromRequest(request) || defaultLocale; // هنا يقوم بالاستعلام عن لغة المتصفح لجعلها اللغة الافتراضية
+    // const locale = defaultLocale; // هنا يقوم بتثبيت اللغة الافتراضية المذكورة في الكود بدون عرضها في رابط الصفحة
+    return NextResponse.redirect(new URL(`/${defaultLocale}${pathname}`, request.url));
   }
 
   return NextResponse.next();

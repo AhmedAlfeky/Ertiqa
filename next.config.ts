@@ -14,10 +14,6 @@ const nextConfig: NextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // ✅ تجاهل أخطاء ESLint أثناء build
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
 };
 
 export default nextConfig;

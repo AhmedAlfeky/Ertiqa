@@ -1,6 +1,6 @@
 export default function LandingPage() {
   return (
-    <div className="font-sans">
+    <div>
       <section className="relative w-full h-[700px]">
         <img
           src="/images/eezy.png"
@@ -26,10 +26,10 @@ export default function LandingPage() {
       {/* absolute inset-0 flex items-center justify-center */}
       
       {/* 1. Navigation */}
-      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200">
+      <header className="font-cairo bg-white/80 backdrop-blur-sm border-b border-gray-200">
         <nav className="container mx-auto px-4 py-3 flex justify-between items-center">
          
-          <div className="font-bold text-xl text-indigo-700">إرتقاء</div>
+          <div className="font-amiri font-bold text-xl text-indigo-700">إرتقاء</div>
           <div className="hidden md:flex space-x-8">
             <a href="#courses" className="text-gray-600 hover:text-indigo-600">الدورات</a><br></br>
             <a href="#podcast" className="text-gray-600 hover:text-indigo-600">البودكاست</a>
@@ -43,12 +43,12 @@ export default function LandingPage() {
       </header>
 
       {/* 2. Hero Section */}
-      <section className="bg-gradient-to-br from-indigo-50 to-white pt-20 pb-16">
+      <section className="bg-linear-to-br from-indigo-50 to-white pt-20 pb-16">
         <div className="container mx-auto px-4 text-center max-w-3xl">
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             تعلّم، تطوّر، <span className="text-indigo-600">ارتَقِ</span>
           </h1>
-          <p className="text-lg text-gray-600 mb-8">
+          <p className="font-amiri text-lg text-amber-400 mb-8">
             منصة عربية متكاملة تقدم محتوى تعليميًا عالي الجودة عبر الدورات، البودكاست، الفعاليات، والمقالات — لبناء معرفتك وتطوير مهاراتك في بيئة واحدة.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
@@ -102,10 +102,10 @@ export default function LandingPage() {
       </section>
 
       {/* 5. CTA Final */}
-      <section className="py-20 bg-white text-white text-center">
+      <section className="py-20 bg-white text-cyan-700 text-center">
         <div className="container mx-auto px-4 max-w-2xl">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">جاهز لبدء رحلتك التعليمية؟</h2>
-          <p className="text-indigo-100 mb-8">انضم إلى آلاف المتعلمين الذين غيّروا مسارهم مع إرتقاء.</p>
+          <p className="text-amber-600 mb-8">انضم إلى آلاف المتعلمين الذين غيّروا مسارهم مع إرتقاء.</p>
           <button className="bg-white text-indigo-700 px-8 py-3 rounded-xl font-bold text-lg hover:bg-gray-100 transition">
             اشترك الآن
           </button>

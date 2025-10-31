@@ -17,6 +17,7 @@ export default function Navbar({ lang }: { lang: string }) {
     { name: 'الفعاليات', href: '/ar/events' },
     { name: 'المدونة', href: '/ar/blog' },
     { name: 'الكتب', href: '/ar/books' },
+    { name: 'تواصل معنا', href: '/ar/contacts' }
   ];
 
   return (

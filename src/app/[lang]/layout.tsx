@@ -1,23 +1,20 @@
 import { ReactNode } from 'react';
-import PublicLayout from '@/app/(public)/layout'; // ✅ استيراد PublicLayout
+import PublicLayout from '@/app/(public)/layout';
+//import { promises } from 'dns';
 
+
+// ✅ إزالة async إذا لم تكن بحاجة لـ await داخل الدالة
 export default async function LangLayout({
   children,
   params,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
   params: Promise<{ lang: string }>;
 }) {
+  // ✅ استخدم await لفك الـ Promise
   const { lang } = await params;
-  const dir = lang === 'ar' ? 'rtl' : 'ltr';
-  const fontClass = lang === 'ar' ? 'font-tajawal' : 'font-inter';
 
   return (
-    <html lang={lang} dir={dir} className={fontClass}>
-      <body>
-        {/* تغليف المحتوى بـ PublicLayout */}
-        <PublicLayout lang={lang}>{children}</PublicLayout>
-      </body>
-    </html>
-  );
+    <PublicLayout lang={lang}>{children}</PublicLayout>
+   );
 }

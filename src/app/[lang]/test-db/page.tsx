@@ -1,4 +1,3 @@
-// app/[lang]/page.tsx
 import { createClient } from "@supabase/supabase-js";
 
 type Props = { params: { lang: string } };
@@ -21,20 +20,20 @@ export default async function Page({ params }: Props) {
     if (error) throw error;
 
     return (
-      <main style={{ padding: 24, fontFamily: "system-ui, sans-serif" }}>
+      <main>
         <h1>✅ اختبار الاتصال بقاعدة البيانات — landing ({lang})</h1>
         <p>عدد السجلات التي استُرجعت: {Array.isArray(data) ? data.length : 0}</p>
-        <pre style={{ whiteSpace: "pre-wrap", background: "#f5f5f5", padding: 12 }}>
+        <pre>
           {JSON.stringify(data, null, 2)}
         </pre>
       </main>
     );
   } catch (err: any) {
     return (
-      <main style={{ padding: 24 }}>
+      <main>
         <h1>❌ فشل الاتصال بـ Supabase — landing ({lang})</h1>
         <p>رسالة الخطأ:</p>
-        <pre style={{ whiteSpace: "pre-wrap", background: "#fee", padding: 12 }}>
+        <pre>
           {String(err?.message ?? err)}
         </pre>
       </main>

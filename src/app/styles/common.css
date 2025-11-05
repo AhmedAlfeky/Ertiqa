@@ -50,13 +50,13 @@
 .auth-button1 {
   font-family: cairo;
   border: 2px solid #ffa500;
-  box-shadow: 0.5px 1px 3px black;
+  /* box-shadow: 0.5px 1px 3px black; */
 }
 
 .auth-button2 {
   font-family: cairo;
   border: 2px solid #ffa500;
-  box-shadow: 0.5px 1px 3px black;
+  /* box-shadow: 0.5px 1px 3px black; */
 }
 
 

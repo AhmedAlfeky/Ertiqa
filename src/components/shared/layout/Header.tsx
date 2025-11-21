@@ -14,8 +14,8 @@ export default function Header({ lang }: { lang: string }) {
   // روابط الاتصال
   const contact = {
     email: 'info@ertiqa.com',
-    whatsapp: '971505217008+',
-    whatsappLink: 'https://wa.me/+971505217008',
+    whatsapp: '201116256281+',
+    whatsappLink: 'https://wa.me/+201116256281',
   };
 
   return (

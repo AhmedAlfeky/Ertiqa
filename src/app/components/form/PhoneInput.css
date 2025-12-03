@@ -1,0 +1,150 @@
+/* Phone Input Component Styles */
+.phone-input-container {
+  width: 100%;
+  position: relative;
+  background-color: color-mix(in oklab, var(--input) 30%, transparent) !important;
+  border: 2px solid color-mix(in oklab, var(--border) 30%, transparent) !important;
+  border-radius: 6px !important;
+  outline-color: color-mix(in oklab, var(--ring) 50%, transparent);
+}
+.country-list {
+  background-color: color-mix(in oklab, var(--input) 30%, transparent) !important;
+}
+.phone-input-container .react-tel-input {
+  width: 100%;
+}
+
+.phone-input-container .react-tel-input input {
+  width: 100% !important;
+  height: 36px !important;
+  padding: 4px 12px 4px 48px !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 6px !important;
+  font-size: 14px !important;
+  background-color: hsl(var(--input) / 0.3) !important;
+  color: hsl(var(--foreground)) !important;
+  outline: none !important;
+  transition: all 0.2s ease-in-out !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.phone-input-container .react-tel-input input:focus {
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 3px hsl(var(--ring) / 0.5) !important;
+}
+
+.phone-input-container .react-tel-input .selected-flag {
+  background-color: hsl(var(--input) / 0.3) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-right: none !important;
+  border-radius: 6px 0 0 6px !important;
+  height: 36px !important;
+  width: 46px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease-in-out !important;
+}
+
+.phone-input-container .react-tel-input .selected-flag:hover {
+  background-color: hsl(var(--accent)) !important;
+}
+
+.phone-input-container .react-tel-input .selected-flag:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 2px hsl(var(--ring)) !important;
+}
+
+.phone-input-container .react-tel-input .flag-dropdown {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+.phone-input-container .react-tel-input .country-list {
+  background-color: oklch(1 0 0 / 25%) !important;
+  border: 2px solid color-mix(in oklab, var(--border) 30%, transparent) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
+  max-height: 200px !important;
+  overflow-y: auto !important;
+}
+
+.phone-input-container .react-tel-input .country-list .country {
+  color: hsl(var(--foreground)) !important;
+  background-color: transparent !important;
+  padding: 8px 12px !important;
+  border-bottom: 1px solid hsl(var(--border) / 0.5) !important;
+}
+
+.phone-input-container .react-tel-input .country-list .country:hover {
+  background-color: hsl(var(--accent)) !important;
+}
+
+.phone-input-container .react-tel-input .country-list .country.highlight {
+  background-color: hsl(var(--accent)) !important;
+}
+
+.phone-input-container .react-tel-input .country-list .country:last-child {
+  border-bottom: none !important;
+}
+
+/* Fix scrollbar styling for dark theme */
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar-track {
+  background: hsl(var(--muted)) !important;
+  border-radius: 4px !important;
+}
+
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar-thumb {
+  background: oklch(0.92 0.004 286.32) !important;
+  border-radius: 4px !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--ring)) !important;
+}
+
+/* Fix horizontal scrollbar */
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar:horizontal {
+  height: 8px !important;
+}
+
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar-track:horizontal {
+  background: hsl(var(--muted)) !important;
+  border-radius: 4px !important;
+}
+
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar-thumb:horizontal {
+  background: hsl(var(--foreground) / 0.9) !important;
+  border-radius: 4px !important;
+  border: 1px solid hsl(var(--border)) !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3) !important;
+}
+
+.phone-input-container .react-tel-input .country-list::-webkit-scrollbar-thumb:horizontal:hover {
+  background: hsl(var(--foreground)) !important;
+  border: 1px solid hsl(var(--ring)) !important;
+}
+
+/* Search input in dropdown */
+.phone-input-container .react-tel-input .country-list .search-box {
+  background-color: hsl(var(--input) / 0.3) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 4px !important;
+  color: hsl(var(--foreground)) !important;
+  padding: 8px !important;
+  margin: 8px !important;
+  width: calc(100% - 16px) !important;
+}
+
+.phone-input-container .react-tel-input .country-list .search-box:focus {
+  border-color: hsl(var(--ring)) !important;
+  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.5) !important;
+  outline: none !important;
+}

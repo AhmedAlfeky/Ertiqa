@@ -1,19 +1,34 @@
-import type { NextConfig } from "next";
+import { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
-  // يمكن إضافة أي إعدادات أخرى
-  
-  allowedDevOrigins: [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://192.168.44.1:3000", // الـ IP الخاص بالجهاز على الشبكة
-  ],
-
-  // ✅ تجاهل أخطاء TypeScript أثناء build
   typescript: {
     ignoreBuildErrors: true,
   },
-
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+      },
+    ],
+  },
+  // output: "export",
+  webpack: (config) => {
+    config.module.rules.push({
+      test: /\.glsl$/,
+      type: "asset/source",
+    }); 
+    return config;
+  },
 };
 
-export default nextConfig;
+const withNextIntl = createNextIntlPlugin();
+export default withNextIntl(nextConfig);

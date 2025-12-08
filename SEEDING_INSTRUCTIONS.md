@@ -161,3 +161,7 @@ DELETE FROM courses WHERE instructor_id = 'your-instructor-id';
 
 Enjoy your populated database! 🚀
 
+
+
+
+

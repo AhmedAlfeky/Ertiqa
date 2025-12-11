@@ -5,6 +5,7 @@ import { Plus, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { UnitAccordion } from './UnitAccordion';
 import { AddUnitDialog } from './AddUnitDialog';
 import { AddLessonDialog } from './AddLessonDialog';
@@ -48,6 +49,7 @@ interface CurriculumTabProps {
 }
 
 export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
+  const t = useTranslations('instructor');
   const [showAddUnit, setShowAddUnit] = useState(false);
   const [showAddLesson, setShowAddLesson] = useState(false);
   const [selectedUnitId, setSelectedUnitId] = useState<number | null>(null);
@@ -111,10 +113,10 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
       const result = await reorderUnits(courseId, unitIds);
 
       if (result.success) {
-        toast.success('Units reordered');
+        toast.success(t('unitsReordered'));
         router.refresh();
       } else {
-        toast.error('Failed to save order');
+        toast.error(t('failedToSaveOrder'));
         // Revert on error
         setLocalUnits(initialUnits);
       }
@@ -133,11 +135,11 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
     });
 
     if (result.success) {
-      toast.success('Unit created successfully');
+      toast.success(t('unitCreatedSuccessfully'));
       setShowAddUnit(false);
       router.refresh();
     } else {
-      toast.error(result.error || 'Failed to create unit');
+      toast.error(result.error || t('failedToCreateUnit'));
       throw new Error(result.error);
     }
   };
@@ -154,12 +156,12 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
     });
 
     if (result.success) {
-      toast.success('Unit updated successfully');
+      toast.success(t('unitUpdatedSuccessfully'));
       setEditingUnit(null);
       setShowAddUnit(false);
       router.refresh();
     } else {
-      toast.error(result.error || 'Failed to update unit');
+      toast.error(result.error || t('failedToUpdateUnit'));
       throw new Error(result.error);
     }
   };
@@ -170,10 +172,10 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
     const result = await deleteUnit(unitId);
 
     if (result.success) {
-      toast.success('Unit deleted successfully');
+      toast.success(t('unitDeletedSuccessfully'));
       router.refresh();
     } else {
-      toast.error(result.error || 'Failed to delete unit');
+      toast.error(result.error || t('failedToDeleteUnit'));
     }
   };
 
@@ -194,9 +196,9 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold">Course Curriculum</h2>
+          <h2 className="text-2xl font-semibold">{t('courseCurriculum')}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Organize your course content into units and lessons
+            {t('organizeCourseContent')}
           </p>
         </div>
         <Button
@@ -206,7 +208,7 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
           }}
         >
           <Plus className="mr-2 h-4 w-4" />
-          Add Unit
+          {t('addUnit')}
         </Button>
       </div>
 
@@ -214,14 +216,13 @@ export function CurriculumTab({ courseId, initialUnits }: CurriculumTabProps) {
       {initialUnits.length === 0 ? (
         <Card className="p-12 text-center">
           <div className="max-w-md mx-auto">
-            <h3 className="text-lg font-semibold mb-2">No units yet</h3>
+            <h3 className="text-lg font-semibold mb-2">{t('noUnitsYet')}</h3>
             <p className="text-muted-foreground mb-6">
-              Start building your course by adding your first unit. Units help
-              organize your lessons into logical sections.
+              {t('startBuildingCourse')}
             </p>
             <Button onClick={() => setShowAddUnit(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Create First Unit
+              {t('createFirstUnit')}
             </Button>
           </div>
         </Card>

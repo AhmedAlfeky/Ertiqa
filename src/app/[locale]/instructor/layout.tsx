@@ -25,20 +25,17 @@ export default async function InstructorLayout({
   return (
     <SidebarProvider className="">
       <div
-        className={`flex w-full min-h-screen ${
-          isRTL ? 'flex-row-reverse' : ''
-        }`}
+        className={`flex w-full min-h-screen 
+        `}
       >
         <InstructorSidebar locale={locale} />
         <main className="flex-1 w-full">
-          <div
-            className={`sticky top-0 z-10 bg-background border-b px-4 py-2 ${
-              isRTL ? 'text-right' : 'text-left'
-            }`}
-          >
-            <SidebarTrigger />
+          <div className={`sticky top-0 z-10 bg-background border-b `}>
+            <div className="flex items-center h-14">
+              <SidebarTrigger />
+            </div>
           </div>
-          <div className="p-6">{children}</div>
+          <section className="p-6">{children}</section>
         </main>
       </div>
     </SidebarProvider>

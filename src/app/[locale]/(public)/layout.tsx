@@ -14,7 +14,7 @@ export default async function PublicLayout({
   return (
     <div className="bg-background text-foreground">
       <Navbar />
-      <main className="pt-24">{children}</main>
+      <main className="">{children}</main>
       <Footer locale={locale} />
     </div>
   );

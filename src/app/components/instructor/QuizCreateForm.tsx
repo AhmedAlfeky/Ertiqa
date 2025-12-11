@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import {
   Form,
   FormControl,
@@ -45,6 +46,7 @@ interface QuizCreateFormProps {
 }
 
 export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFormProps) {
+  const t = useTranslations('instructor');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
 
@@ -67,10 +69,10 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
       });
 
       if (result.success && result.data) {
-        toast.success('Quiz created successfully!');
+        toast.success(t('quizCreatedSuccessfully'));
         router.push(`/${locale}/instructor/courses/${courseId}/manage/quiz/${result.data.lessonId}`);
       } else {
-        toast.error(result.error || 'Failed to create quiz');
+        toast.error(result.error || t('failedToCreateQuiz'));
       }
     });
   };
@@ -84,9 +86,9 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Create New Quiz</h1>
+          <h1 className="text-3xl font-bold">{t('createNewQuiz')}</h1>
           <p className="text-muted-foreground mt-1">
-            Set up your quiz details, then add questions
+            {t('setUpQuizDetails')}
           </p>
         </div>
       </div>
@@ -100,7 +102,7 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
               name="unitId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Select Unit *</FormLabel>
+                  <FormLabel>{t('selectUnit')} *</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value?.toString()}
@@ -108,7 +110,7 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder="Choose a unit for this quiz" />
+                        <SelectValue placeholder={t('chooseUnitForQuiz')} />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -120,7 +122,7 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
                     </SelectContent>
                   </Select>
                   <FormDescription>
-                    The quiz will be added to this unit
+                    {t('quizWillBeAddedToUnit')}
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -134,7 +136,7 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
                 name="title_ar"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Arabic Title *</FormLabel>
+                    <FormLabel>{t('arabicTitle')} *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -153,7 +155,7 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
                 name="title_en"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>English Title *</FormLabel>
+                    <FormLabel>{t('englishTitle')} *</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
@@ -170,12 +172,12 @@ export function QuizCreateForm({ courseId, unitId, units, locale }: QuizCreateFo
             <div className="flex justify-end gap-3">
               <Link href={`/${locale}/instructor/courses/${courseId}/manage`}>
                 <Button type="button" variant="outline" disabled={isPending}>
-                  Cancel
+                  {t('cancel')}
                 </Button>
               </Link>
               <Button type="submit" disabled={isPending}>
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                Create Quiz & Add Questions
+                {t('createQuizAndAddQuestions')}
               </Button>
             </div>
           </form>

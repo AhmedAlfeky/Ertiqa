@@ -6,6 +6,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/app/components/dashboard/DataTable';
 import { DeleteDialog } from '@/app/components/dashboard/DeleteDialog';
+import { LevelDialog } from './LevelDialog';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { deleteLevel } from '../../../features/admin/actions';
 import { toast } from 'sonner';
@@ -27,6 +28,10 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingLevel, setEditingLevel] = useState<Level | undefined>(
+    undefined
+  );
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -66,7 +71,10 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => router.push(`/${locale}/admin/levels/${level.id}`)}
+              onClick={() => {
+                setEditingLevel(level);
+                setDialogOpen(true);
+              }}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -86,7 +94,12 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={() => router.push(`/${locale}/admin/levels/new`)}>
+        <Button
+          onClick={() => {
+            setEditingLevel(undefined);
+            setDialogOpen(true);
+          }}
+        >
           <Plus className="me-2 h-4 w-4" />
           {t('addLevel')}
         </Button>
@@ -107,6 +120,18 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
         description={t('deleteLevelDescription')}
         itemName={levels.find(l => l.id === deleteId)?.name || ''}
         isLoading={isDeleting}
+      />
+
+      <LevelDialog
+        open={dialogOpen}
+        onOpenChange={open => {
+          setDialogOpen(open);
+          if (!open) {
+            setEditingLevel(undefined);
+          }
+        }}
+        level={editingLevel}
+        locale={locale}
       />
     </div>
   );

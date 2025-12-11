@@ -21,7 +21,7 @@ export default async function LandingPage({
 
   const [courses, instructors, testimonials, categories] = await Promise.all([
     getFeaturedCourses(locale, 6),
-    getFeaturedInstructors(4),
+    getFeaturedInstructors(10),
     getTestimonials(6),
     getCategoriesWithCounts(locale),
   ]);

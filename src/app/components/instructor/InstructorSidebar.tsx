@@ -110,7 +110,10 @@ export function InstructorSidebar({ locale }: InstructorSidebarProps) {
   };
 
   return (
-    <Sidebar>
+    <Sidebar
+      side={locale === 'ar' ? 'right' : 'left'}
+      dir={locale === 'ar' ? 'rtl' : 'ltr'}
+    >
       <SidebarHeader className="border-b p-4">
         <div className="flex items-center gap-2">
           <GraduationCap className="h-6 w-6 text-primary" />
@@ -157,7 +160,7 @@ export function InstructorSidebar({ locale }: InstructorSidebarProps) {
                         <SidebarMenuSubButton asChild>
                           <Link href={`/${locale}/instructor/courses`}>
                             <List className="h-4 w-4" />
-                            <span>All Courses</span>
+                            <span>{t('allCourses')}</span>
                           </Link>
                         </SidebarMenuSubButton>
                       </SidebarMenuSubItem>
@@ -169,7 +172,7 @@ export function InstructorSidebar({ locale }: InstructorSidebarProps) {
                                 href={`${pathname.split('?')[0]}?tab=details`}
                               >
                                 <Info className="h-4 w-4" />
-                                <span>Basic Info</span>
+                                <span>{t('basicInfo')}</span>
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
@@ -181,7 +184,7 @@ export function InstructorSidebar({ locale }: InstructorSidebarProps) {
                                 }?tab=curriculum`}
                               >
                                 <List className="h-4 w-4" />
-                                <span>Curriculum</span>
+                                <span>{t('curriculum')}</span>
                               </Link>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
@@ -233,10 +236,10 @@ export function InstructorSidebar({ locale }: InstructorSidebarProps) {
           </Avatar>
           <div className="flex-1 overflow-hidden">
             <p className="text-sm font-medium truncate">
-              {user?.fullName || 'Instructor'}
+              {user?.fullName || t('instructor')}
             </p>
             <p className="text-xs text-muted-foreground truncate">
-              {user?.email || 'Loading...'}
+              {user?.email || t('loading') || 'Loading...'}
             </p>
           </div>
         </div>

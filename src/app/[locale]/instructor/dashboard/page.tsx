@@ -1,12 +1,20 @@
 import { Suspense } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
 import { BookOpen, Users, Clock, TrendingUp } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getCurrentInstructorId } from '@/features/instructor/queries';
 import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 
-async function DashboardStats() {
+async function DashboardStats({ locale, t }: { locale: string; t: any }) {
   const supabase = await createClient();
   const instructorId = await getCurrentInstructorId();
 
@@ -31,9 +39,11 @@ async function DashboardStats() {
   const totalStudents = 0; // Placeholder
 
   // Get recent courses
+  const langId = locale === 'ar' ? 1 : 2;
   const { data: recentCourses } = await supabase
     .from('courses')
-    .select(`
+    .select(
+      `
       id,
       cover_image_url,
       is_published,
@@ -42,41 +52,42 @@ async function DashboardStats() {
         title,
         language_id
       )
-    `)
+    `
+    )
     .eq('instructor_id', instructorId)
-    .eq('course_translations.language_id', 1) // Arabic
+    .eq('course_translations.language_id', langId)
     .order('created_at', { ascending: false })
     .limit(5);
 
   const stats = [
     {
-      title: 'Total Courses',
+      title: t('totalCourses'),
       value: coursesCount || 0,
-      description: 'All your courses',
+      description: t('allYourCourses'),
       icon: BookOpen,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'Published',
+      title: t('published'),
       value: publishedCount || 0,
-      description: 'Live courses',
+      description: t('liveCourses'),
       icon: TrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
-      title: 'Students',
+      title: t('students'),
       value: totalStudents,
-      description: 'Total enrollments',
+      description: t('totalEnrollments'),
       icon: Users,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
     },
     {
-      title: 'Draft Courses',
+      title: t('draftCourses'),
       value: (coursesCount || 0) - (publishedCount || 0),
-      description: 'Not yet published',
+      description: t('notYetPublished'),
       icon: Clock,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
@@ -86,7 +97,7 @@ async function DashboardStats() {
   return (
     <>
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => {
+        {stats.map(stat => {
           const Icon = stat.icon;
           return (
             <Card key={stat.title}>
@@ -112,8 +123,8 @@ async function DashboardStats() {
       {recentCourses && recentCourses.length > 0 && (
         <Card className="mt-6">
           <CardHeader>
-            <CardTitle>Recent Courses</CardTitle>
-            <CardDescription>Your latest course activity</CardDescription>
+            <CardTitle>{t('recentCourses')}</CardTitle>
+            <CardDescription>{t('yourLatestCourseActivity')}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -124,22 +135,23 @@ async function DashboardStats() {
                 >
                   <div className="flex-1">
                     <p className="font-medium">
-                      {course.course_translations?.[0]?.title || 'Untitled Course'}
+                      {course.course_translations?.[0]?.title ||
+                        t('untitledCourse')}
                     </p>
                     <p className="text-sm text-muted-foreground">
                       {course.is_published ? (
-                        <span className="text-green-600">Published</span>
+                        <span className="text-green-600">{t('published')}</span>
                       ) : (
-                        <span className="text-orange-600">Draft</span>
+                        <span className="text-orange-600">{t('draft')}</span>
                       )}
                     </p>
                   </div>
-                  <a
-                    href={`/instructor/courses/${course.id}/manage`}
+                  <Link
+                    href={`/${locale}/instructor/courses/${course.id}/manage`}
                     className="text-sm text-primary hover:underline"
                   >
-                    Manage →
-                  </a>
+                    {t('manage')} →
+                  </Link>
                 </div>
               ))}
             </div>
@@ -153,7 +165,7 @@ async function DashboardStats() {
 function StatsLoading() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      {[1, 2, 3, 4].map((i) => (
+      {[1, 2, 3, 4].map(i => (
         <Card key={i}>
           <CardHeader className="space-y-0 pb-2">
             <Skeleton className="h-4 w-24" />
@@ -174,6 +186,7 @@ export default async function InstructorDashboardPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'instructor' });
   const instructorId = await getCurrentInstructorId();
 
   if (!instructorId) {
@@ -184,84 +197,82 @@ export default async function InstructorDashboardPage({
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-muted-foreground">
-            Welcome back! Here's an overview of your teaching activity.
+          <h1 className="text-3xl font-bold tracking-tight">
+            {t('dashboard')}
+          </h1>
+          <p className="text-muted-foreground mt-1">
+            {t('dashboardDescription')}
           </p>
         </div>
-        <a
+        <Link
           href={`/${locale}/instructor/courses/create`}
           className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
-          Create Course
-        </a>
+          {t('createCourse')}
+        </Link>
       </div>
 
       <Suspense fallback={<StatsLoading />}>
-        <DashboardStats />
+        <DashboardStats locale={locale} t={t} />
       </Suspense>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Manage your courses</CardDescription>
+            <CardTitle>{t('quickActions')}</CardTitle>
+            <CardDescription>{t('manageYourCourses')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a
+            <Link
               href={`/${locale}/instructor/courses`}
               className="block text-sm text-primary hover:underline"
             >
-              → View All Courses
-            </a>
-            <a
+              → {t('viewAllCourses')}
+            </Link>
+            <Link
               href={`/${locale}/instructor/courses/create`}
               className="block text-sm text-primary hover:underline"
             >
-              → Create New Course
-            </a>
-            <a
+              → {t('createNewCourse')}
+            </Link>
+            <Link
               href={`/${locale}/instructor/students`}
               className="block text-sm text-primary hover:underline"
             >
-              → View Students
-            </a>
-            <a
+              → {t('viewStudents')}
+            </Link>
+            <Link
               href={`/${locale}/instructor/settings`}
               className="block text-sm text-primary hover:underline"
             >
-              → Settings
-            </a>
+              → {t('settings')}
+            </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Tips & Resources</CardTitle>
-            <CardDescription>Improve your teaching</CardDescription>
+            <CardTitle>{t('tipsAndResources')}</CardTitle>
+            <CardDescription>{t('improveYourTeaching')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Check out our instructor guides to create engaging content and
-              reach more students.
+              {t('tipsDescription')}
             </p>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Support</CardTitle>
-            <CardDescription>Need help?</CardDescription>
+            <CardTitle>{t('support')}</CardTitle>
+            <CardDescription>{t('needHelp')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground mb-3">
-              Our support team is here to help you succeed.
+              {t('supportDescription')}
             </p>
-            <a
-              href="#"
-              className="text-sm text-primary hover:underline"
-            >
-              Contact Support →
+            <a href="#" className="text-sm text-primary hover:underline">
+              {t('contactSupport')} →
             </a>
           </CardContent>
         </Card>
@@ -269,8 +280,3 @@ export default async function InstructorDashboardPage({
     </div>
   );
 }
-
-
-
-
-

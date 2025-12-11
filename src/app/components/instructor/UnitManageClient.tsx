@@ -51,11 +51,11 @@ export function UnitManageClient({
     });
 
     if (result.success) {
-      toast.success('Unit updated successfully');
+      toast.success(t('unitUpdatedSuccessfully'));
       setShowEditUnit(false);
       router.refresh();
     } else {
-      toast.error(result.error || 'Failed to update unit');
+      toast.error(result.error || t('failedToUpdateUnit'));
       throw new Error(result.error);
     }
   };
@@ -64,10 +64,10 @@ export function UnitManageClient({
     const result = await deleteUnit(unit.id);
 
     if (result.success) {
-      toast.success('Unit deleted successfully');
+      toast.success(t('unitDeletedSuccessfully'));
       router.push(`/${locale}/instructor/courses/${courseId}/manage`);
     } else {
-      toast.error(result.error || 'Failed to delete unit');
+      toast.error(result.error || t('failedToDeleteUnit'));
     }
   };
 
@@ -127,11 +127,11 @@ export function UnitManageClient({
           <div className="flex items-center gap-2">
             <Button variant="outline" onClick={() => setShowEditUnit(true)}>
               <Edit className="mr-2 h-4 w-4" />
-              Edit Unit
+              {t('editUnit')}
             </Button>
             <Button onClick={() => setShowAddLesson(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Add Lesson
+              {t('addLesson')}
             </Button>
           </div>
         </div>
@@ -141,24 +141,24 @@ export function UnitManageClient({
       <Card className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-semibold mb-2">Unit Information</h2>
+            <h2 className="text-lg font-semibold mb-2">{t('unitInformation')}</h2>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
-              <span>{unit.lessons?.length || 0} Lessons</span>
+              <span>{unit.lessons?.length || 0} {t('lessons')}</span>
               <span>
                 {unit.lessons?.filter((l: any) => l.lesson_type === 'quiz')
                   .length || 0}{' '}
-                Quizzes
+                {t('quizzes')}
               </span>
               <span>
                 {unit.lessons?.filter((l: any) => l.lesson_type === 'video')
                   .length || 0}{' '}
-                Videos
+                {t('videos')}
               </span>
             </div>
           </div>
           <Button variant="destructive" onClick={() => setShowDeleteUnit(true)}>
             <Trash2 className="mr-2 h-4 w-4" />
-            Delete Unit
+            {t('deleteUnit')}
           </Button>
         </div>
       </Card>
@@ -166,7 +166,7 @@ export function UnitManageClient({
       {/* Lessons List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Lessons</h2>
+          <h2 className="text-xl font-semibold">{t('lessons')}</h2>
         </div>
 
         {unit.lessons && unit.lessons.length > 0 ? (
@@ -202,10 +202,10 @@ export function UnitManageClient({
                             : 'secondary'
                         }
                       >
-                        {lesson.lesson_type === 'quiz' ? 'Quiz' : 'Video'}
+                        {lesson.lesson_type === 'quiz' ? t('quiz') : t('video')}
                       </Badge>
                       {lesson.is_free_preview && (
-                        <Badge variant="outline">Free Preview</Badge>
+                        <Badge variant="outline">{t('freePreview')}</Badge>
                       )}
                     </div>
                     <h3 className="font-semibold text-base mb-1">
@@ -226,14 +226,13 @@ export function UnitManageClient({
         ) : (
           <Card className="p-12 text-center">
             <div className="max-w-md mx-auto">
-              <h3 className="text-lg font-semibold mb-2">No lessons yet</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('noLessonsYet')}</h3>
               <p className="text-muted-foreground mb-6">
-                Start building your unit by adding your first lesson. You can
-                add video lessons or quizzes.
+                {t('startBuildingUnit')}
               </p>
               <Button onClick={() => setShowAddLesson(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add First Lesson
+                {t('addFirstLesson')}
               </Button>
             </div>
           </Card>
@@ -270,11 +269,8 @@ export function UnitManageClient({
         isOpen={showDeleteUnit}
         onClose={() => setShowDeleteUnit(false)}
         onConfirm={handleDeleteUnit}
-        title={t('deleteUnitTitle') || 'Delete Unit'}
-        description={
-          t('deleteUnitDescription') ||
-          'Are you sure you want to delete this unit? All lessons in this unit will also be deleted.'
-        }
+        title={t('deleteUnitTitle')}
+        description={t('deleteUnitDescription')}
         itemName={unit.title_en}
       />
     </div>

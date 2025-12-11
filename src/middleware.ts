@@ -21,12 +21,26 @@ function getLocaleFromPathname(pathname: string): string | null {
 function isPublicRoute(pathname: string): boolean {
   const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, '') || '/';
 
-  return PUBLIC_ROUTES.some(route => {
+  // Check exact public routes
+  if (PUBLIC_ROUTES.some(route => {
     if (route === '/') {
       return pathWithoutLocale === '/';
     }
     return pathWithoutLocale.startsWith(route);
-  });
+  })) {
+    return true;
+  }
+
+  // Allow public access to single instructor and course pages
+  // /instructors/[instructorId] and /courses/[slug]
+  if (
+    pathWithoutLocale.match(/^\/instructors\/[^/]+$/) ||
+    pathWithoutLocale.match(/^\/courses\/[^/]+$/)
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 export async function middleware(request: NextRequest) {

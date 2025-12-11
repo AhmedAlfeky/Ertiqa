@@ -10,6 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import { useTranslations } from 'next-intl';
 
 interface DeleteDialogProps {
   open: boolean;
@@ -24,19 +25,23 @@ export function DeleteDialog({
   open,
   onOpenChange,
   onConfirm,
-  title = 'Are you sure?',
-  description = 'This action cannot be undone.',
+  title,
+  description,
   isDeleting = false,
 }: DeleteDialogProps) {
+  const t = useTranslations('instructor');
+  const defaultTitle = title || t('areYouSure');
+  const defaultDescription = description || t('thisActionCannotBeUndone');
+  
   return (
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
-          <AlertDialogDescription>{description}</AlertDialogDescription>
+          <AlertDialogTitle>{defaultTitle}</AlertDialogTitle>
+          <AlertDialogDescription>{defaultDescription}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={isDeleting}>{t('cancel')}</AlertDialogCancel>
           <AlertDialogAction
             onClick={(e) => {
               e.preventDefault();
@@ -45,7 +50,7 @@ export function DeleteDialog({
             disabled={isDeleting}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
-            {isDeleting ? 'Deleting...' : 'Delete'}
+            {isDeleting ? t('deleting') : t('delete')}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

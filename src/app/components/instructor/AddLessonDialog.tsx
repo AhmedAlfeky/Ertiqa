@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter, useParams } from 'next/navigation';
 import { toast } from 'sonner';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -47,13 +48,18 @@ export function AddLessonDialog({
   unitId,
   onSuccess,
 }: AddLessonDialogProps) {
+  const t = useTranslations('instructor');
   const router = useRouter();
   const params = useParams();
-  const [step, setStep] = useState<'type-selection' | 'quiz-details'>('type-selection');
+  const locale = useLocale();
+  const [step, setStep] = useState<'type-selection' | 'quiz-details'>(
+    'type-selection'
+  );
   const [isPending, startTransition] = useTransition();
 
-  const locale = params.locale as string;
+  const localeParam = params.locale as string;
   const courseId = params.courseId as string;
+  const dir = locale === 'ar' ? 'rtl' : 'ltr';
 
   const form = useForm<QuizTitleData>({
     resolver: zodResolver(quizTitleSchema),
@@ -71,7 +77,9 @@ export function AddLessonDialog({
 
   const handleVideoSelect = () => {
     // Redirect to full page video lesson creator
-    router.push(`/${locale}/instructor/courses/${courseId}/manage/units/${unitId}/lessons/create-video`);
+    router.push(
+      `/${localeParam}/instructor/courses/${courseId}/manage/units/${unitId}/lessons/create-video`
+    );
     handleClose();
   };
 
@@ -85,13 +93,15 @@ export function AddLessonDialog({
       });
 
       if (result.success && result.data) {
-        toast.success('Quiz created successfully');
+        toast.success(t('quizCreatedSuccessfully'));
         // Redirect to quiz builder
-        router.push(`/${locale}/instructor/courses/${courseId}/manage/quiz/${result.data.lessonId}`);
+        router.push(
+          `/${locale}/instructor/courses/${courseId}/manage/quiz/${result.data.lessonId}`
+        );
         handleClose();
         onSuccess();
       } else {
-        toast.error(result.error || 'Failed to create quiz');
+        toast.error(result.error || t('failedToCreateQuiz'));
       }
     });
   };
@@ -101,12 +111,12 @@ export function AddLessonDialog({
       <DialogContent className="sm:max-w-xl">
         <DialogHeader>
           <DialogTitle>
-            {step === 'type-selection' ? 'Add New Lesson' : 'Create Quiz'}
+            {step === 'type-selection' ? t('addNewLesson') : t('createQuiz')}
           </DialogTitle>
           <DialogDescription>
-            {step === 'type-selection' 
-              ? 'Choose the type of lesson you want to add to this unit.' 
-              : 'Enter the title for your new quiz.'}
+            {step === 'type-selection'
+              ? t('chooseLessonType')
+              : t('enterQuizTitle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -118,7 +128,7 @@ export function AddLessonDialog({
               onClick={handleVideoSelect}
             >
               <Video className="h-8 w-8 text-primary" />
-              <span className="font-semibold">Video Lesson</span>
+              <span className="font-semibold">{t('videoLesson')}</span>
             </Button>
 
             <Button
@@ -127,20 +137,28 @@ export function AddLessonDialog({
               onClick={() => setStep('quiz-details')}
             >
               <FileQuestion className="h-8 w-8 text-primary" />
-              <span className="font-semibold">Quiz</span>
+              <span className="font-semibold">{t('quiz')}</span>
             </Button>
           </div>
         ) : (
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleQuizSubmit)} className="space-y-4">
+            <form
+              onSubmit={form.handleSubmit(handleQuizSubmit)}
+              className="space-y-4"
+            >
               <FormField
                 control={form.control}
                 name="title_ar"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Arabic Title</FormLabel>
+                    <FormLabel>{t('arabicTitle')}</FormLabel>
                     <FormControl>
-                      <Input {...field} dir="rtl" placeholder="عنوان الاختبار" disabled={isPending} />
+                      <Input
+                        {...field}
+                        dir="rtl"
+                        placeholder="عنوان الاختبار"
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -152,9 +170,13 @@ export function AddLessonDialog({
                 name="title_en"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>English Title</FormLabel>
+                    <FormLabel>{t('englishTitle')}</FormLabel>
                     <FormControl>
-                      <Input {...field} placeholder="Quiz Title" disabled={isPending} />
+                      <Input
+                        {...field}
+                        placeholder="Quiz Title"
+                        disabled={isPending}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -168,11 +190,13 @@ export function AddLessonDialog({
                   onClick={() => setStep('type-selection')}
                   disabled={isPending}
                 >
-                  Back
+                  {t('back')}
                 </Button>
                 <Button type="submit" disabled={isPending}>
-                  {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                  Create & Add Questions
+                  {isPending && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  )}
+                  {t('createAndAddQuestions')}
                 </Button>
               </div>
             </form>

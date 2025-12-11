@@ -5,6 +5,7 @@ import { Upload, X, ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
 
 interface ImageUploadProps {
   value?: string | null;
@@ -23,6 +24,7 @@ export function ImageUpload({
   disabled,
   className,
 }: ImageUploadProps) {
+  const t = useTranslations('instructor');
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(value || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,13 +36,13 @@ export function ImageUpload({
     // Validate file type
     const validTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/jpg'];
     if (!validTypes.includes(file.type)) {
-      alert('Please upload a JPEG, PNG, or WebP image');
+      alert(t('pleaseUploadValidImage'));
       return;
     }
 
     // Validate file size (5MB)
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
+      alert(t('fileSizeMustBeLess'));
       return;
     }
 
@@ -65,12 +67,12 @@ export function ImageUpload({
       if (result.success && result.data) {
         onChange(result.data.url);
       } else {
-        alert(result.error || 'Failed to upload image');
+        alert(result.error || t('failedToUploadImage'));
         setPreview(value || null);
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('An error occurred while uploading');
+      alert(t('anErrorOccurred'));
       setPreview(value || null);
     } finally {
       setIsUploading(false);
@@ -135,14 +137,14 @@ export function ImageUpload({
           {isUploading ? (
             <>
               <Upload className="h-10 w-10 animate-pulse text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Uploading...</p>
+              <p className="text-sm text-muted-foreground">{t('uploading')}</p>
             </>
           ) : (
             <>
               <ImageIcon className="h-10 w-10 text-muted-foreground" />
-              <p className="text-sm font-medium">Click to upload course cover</p>
+              <p className="text-sm font-medium">{t('clickToUploadCourseCover')}</p>
               <p className="text-xs text-muted-foreground">
-                JPEG, PNG, or WebP (Max 5MB)
+                {t('jpegPngWebpMax5mb')}
               </p>
             </>
           )}

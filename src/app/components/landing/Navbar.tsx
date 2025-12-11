@@ -17,6 +17,9 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
+  // Check if we're on the home page
+  const isHomePage = pathname === `/${locale}` || pathname === `/${locale}/`;
+
   // تأثير السكرول
   useEffect(() => {
     const handleScroll = () => {
@@ -41,13 +44,35 @@ export const Navbar = () => {
     window.location.href = `/${newLocale}${pathWithoutLocale}`;
   };
 
+  // Determine navbar background based on page and scroll state
+  const getNavbarClasses = () => {
+    if (isHomePage) {
+      // On home page: transparent when at top, background when scrolled
+      return isScrolled
+        ? 'bg-background/90 dark:bg-slate-900/90 shadow-lg border-b border-border backdrop-blur-md py-3'
+        : 'bg-transparent border-b border-transparent py-4';
+    } else {
+      // On other pages: always show background (not white)
+      return 'bg-slate-50/95 dark:bg-slate-900/95 shadow-md border-b border-border backdrop-blur-md py-3';
+    }
+  };
+
+  // Determine link colors based on page and scroll state
+  const getLinkClasses = () => {
+    if (isHomePage) {
+      return isScrolled
+        ? 'text-yale-blue dark:text-white hover:text-gold-primary dark:hover:text-gold-primary'
+        : 'text-white hover:text-gold-primary';
+    } else {
+      return 'text-yale-blue dark:text-white hover:text-gold-primary dark:hover:text-gold-primary';
+    }
+  };
+
   return (
     <nav
       className={cn(
         'fixed top-0 start-0 end-0 z-50 transition-all duration-300 ease-in-out',
-        isScrolled
-          ? 'bg-background/95 dark:bg-slate-900/95 backdrop-blur-md shadow-lg py-3 border-b border-border'
-          : 'bg-yale-blue/95 dark:bg-slate-900/95 backdrop-blur-md py-5'
+        getNavbarClasses()
       )}
     >
       <MaxWidthWrapper noPadding className=" flex items-center justify-between">
@@ -56,9 +81,7 @@ export const Navbar = () => {
           <span
             className={cn(
               'text-2xl font-bold transition-colors',
-              isScrolled
-                ? 'text-yale-blue dark:text-gold-primary'
-                : 'text-gold-primary'
+              isScrolled ? 'text-gold-primary' : 'text-gold-primary'
             )}
           >
             إرتقاء
@@ -73,9 +96,7 @@ export const Navbar = () => {
               href={link.href}
               className={cn(
                 'transition-colors font-medium text-sm',
-                isScrolled
-                  ? 'text-yale-blue dark:text-white hover:text-gold-primary dark:hover:text-gold-primary'
-                  : 'text-white hover:text-gold-primary'
+                getLinkClasses()
               )}
             >
               {link.name}
@@ -90,9 +111,7 @@ export const Navbar = () => {
             onClick={toggleLocale}
             className={cn(
               'transition flex items-center gap-1',
-              isScrolled
-                ? 'text-yale-blue dark:text-white hover:text-gold-primary dark:hover:text-gold-primary'
-                : 'text-white hover:text-gold-primary'
+              getLinkClasses()
             )}
             title={locale === 'ar' ? 'English' : 'العربية'}
           >
@@ -105,9 +124,9 @@ export const Navbar = () => {
             href={`/${locale}/login`}
             className={cn(
               'px-5 py-2 rounded-full border transition font-semibold text-sm',
-              isScrolled
-                ? 'border-yale-blue text-yale-blue dark:border-gold-primary dark:text-gold-primary hover:bg-yale-blue hover:text-white dark:hover:bg-gold-primary dark:hover:text-yale-blue'
-                : 'border-gold-primary text-gold-primary hover:bg-gold-primary hover:text-yale-blue'
+              isHomePage && !isScrolled
+                ? 'border-white text-white hover:bg-white hover:text-yale-blue'
+                : 'border-yale-blue text-yale-blue dark:border-gold-primary dark:text-gold-primary hover:bg-yale-blue hover:text-white dark:hover:bg-gold-primary dark:hover:text-yale-blue'
             )}
           >
             {t('login')}
@@ -116,9 +135,9 @@ export const Navbar = () => {
             href={`/${locale}/signup`}
             className={cn(
               'px-5 py-2 rounded-full transition font-semibold text-sm',
-              isScrolled
-                ? 'bg-yale-blue text-white dark:bg-gold-primary dark:text-yale-blue hover:bg-yale-blue-light dark:hover:bg-gold-light'
-                : 'bg-gold-primary text-yale-blue hover:bg-gold-light'
+              isHomePage && !isScrolled
+                ? 'bg-gold-primary text-yale-blue hover:bg-gold-light'
+                : 'bg-yale-blue text-white dark:bg-gold-primary dark:text-yale-blue hover:bg-yale-blue-light dark:hover:bg-gold-light'
             )}
           >
             {t('signup')}
@@ -129,7 +148,7 @@ export const Navbar = () => {
         <button
           className={cn(
             'md:hidden transition-colors',
-            isScrolled ? 'text-yale-blue dark:text-white' : 'text-white'
+            isHomePage && !isScrolled ? 'text-white' : 'text-yale-blue dark:text-white'
           )}
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
@@ -146,9 +165,9 @@ export const Navbar = () => {
             exit={{ opacity: 0, height: 0 }}
             className={cn(
               'md:hidden border-t',
-              isScrolled
-                ? 'bg-background dark:bg-slate-900 border-border'
-                : 'bg-yale-blue dark:bg-slate-900 border-yale-blue-light dark:border-slate-700'
+              isHomePage && !isScrolled
+                ? 'bg-yale-blue dark:bg-slate-900 border-yale-blue-light dark:border-slate-700'
+                : 'bg-slate-50 dark:bg-slate-900 border-border'
             )}
           >
             <div className="flex flex-col p-6 gap-4">
@@ -161,7 +180,7 @@ export const Navbar = () => {
                     'text-lg font-medium transition-colors',
                     isScrolled
                       ? 'text-yale-blue dark:text-white hover:text-gold-primary'
-                      : 'text-white hover:text-gold-primary'
+                      : 'text-yale-blue dark:text-white hover:text-gold-primary'
                   )}
                 >
                   {link.name}
@@ -184,7 +203,7 @@ export const Navbar = () => {
                       'transition flex items-center gap-1 px-3 py-2',
                       isScrolled
                         ? 'text-yale-blue dark:text-white hover:text-gold-primary'
-                        : 'text-white hover:text-gold-primary'
+                        : 'text-yale-blue dark:text-white hover:text-gold-primary'
                     )}
                   >
                     <Globe className="w-4 h-4" />
@@ -199,7 +218,7 @@ export const Navbar = () => {
                     'text-center w-full py-3 rounded-lg border transition',
                     isScrolled
                       ? 'border-yale-blue text-yale-blue dark:border-gold-primary dark:text-gold-primary hover:bg-yale-blue hover:text-white dark:hover:bg-gold-primary dark:hover:text-yale-blue'
-                      : 'border-gold-primary text-gold-primary hover:bg-gold-primary hover:text-yale-blue'
+                      : 'border-yale-blue text-yale-blue dark:border-gold-primary dark:text-gold-primary hover:bg-yale-blue hover:text-white dark:hover:bg-gold-primary dark:hover:text-yale-blue'
                   )}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >

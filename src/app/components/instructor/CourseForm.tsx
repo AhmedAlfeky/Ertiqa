@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -42,11 +43,13 @@ export function CourseForm({
   levels,
   languages,
   categories,
-  submitLabel = 'Save Changes',
+  submitLabel,
   showCancel = true,
 }: CourseFormProps) {
+  const t = useTranslations('instructor');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const defaultSubmitLabel = submitLabel || t('saveChanges');
 
   // Extract translations from course_translations array
   const arTranslation = course?.course_translations?.find(
@@ -111,7 +114,7 @@ export function CourseForm({
         });
 
         if (!basicInfoResult.success) {
-          toast.error(basicInfoResult.error || 'Failed to update basic info');
+          toast.error(basicInfoResult.error || t('failedToUpdateBasicInfo'));
           return;
         }
 
@@ -133,23 +136,23 @@ export function CourseForm({
         });
 
         if (!settingsResult.success) {
-          toast.error(settingsResult.error || 'Failed to update settings');
+          toast.error(settingsResult.error || t('failedToUpdateSettings'));
           return;
         }
 
-        toast.success('Course updated successfully');
+        toast.success(t('courseUpdatedSuccessfully'));
         router.refresh();
       } else {
         // Create Mode
         const result = await createCourse(data, locale);
 
         if (result.success && result.data?.courseId) {
-          toast.success('Course created successfully!');
+          toast.success(t('courseCreatedSuccessfully'));
           router.push(
             `/${locale}/instructor/courses/${result.data.courseId}/manage`
           );
         } else {
-          toast.error(result.error || 'Failed to create course');
+          toast.error(result.error || t('failedToCreateCourse'));
         }
       }
     });
@@ -175,11 +178,11 @@ export function CourseForm({
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
           {/* Course Titles */}
           <div className="bg-card p-6 rounded-lg border space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Course Titles</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('courseTitles')}</h2>
 
             <FormInput
               name="titleAr"
-              label="Arabic Title"
+              label={t('arabicTitle')}
               placeholder="عنوان الدورة"
               formType="input"
               inputType="text"
@@ -189,7 +192,7 @@ export function CourseForm({
 
             <FormInput
               name="titleEn"
-              label="English Title"
+              label={t('englishTitle')}
               placeholder="Course Title"
               formType="input"
               inputType="text"
@@ -200,11 +203,11 @@ export function CourseForm({
 
           {/* Subtitles (Optional) */}
           <div className="bg-card p-6 rounded-lg border space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Subtitles (Optional)</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('subtitlesOptional')}</h2>
 
             <FormInput
               name="subtitleAr"
-              label="Arabic Subtitle"
+              label={t('arabicSubtitle')}
               placeholder="عنوان فرعي"
               formType="input"
               inputType="text"
@@ -213,7 +216,7 @@ export function CourseForm({
 
             <FormInput
               name="subtitleEn"
-              label="English Subtitle"
+              label={t('englishSubtitle')}
               placeholder="Course Subtitle"
               formType="input"
               inputType="text"
@@ -223,11 +226,11 @@ export function CourseForm({
 
           {/* Descriptions */}
           <div className="bg-card p-6 rounded-lg border space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Descriptions</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('descriptions')}</h2>
 
             <FormInput
               name="descriptionAr"
-              label="Arabic Description"
+              label={t('arabicDescription')}
               placeholder="وصف الدورة التدريبية..."
               formType="textarea"
               required
@@ -237,7 +240,7 @@ export function CourseForm({
 
             <FormInput
               name="descriptionEn"
-              label="English Description"
+              label={t('englishDescription')}
               placeholder="Course description..."
               formType="textarea"
               required
@@ -248,11 +251,11 @@ export function CourseForm({
 
           {/* Cover Image */}
           <div className="bg-card p-6 rounded-lg border">
-            <h2 className="text-xl font-semibold mb-4">Cover Image</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('coverImage')}</h2>
             <FormImageUpload
               name="coverImageUrl"
-              label="Course Cover"
-              description="Upload a high-quality cover image for your course"
+              label={t('courseCover')}
+              description={t('coverImageDescription')}
               bucket="courses"
               folder="course-covers"
               maxSizeMB={5}
@@ -262,31 +265,31 @@ export function CourseForm({
 
           {/* Course Settings */}
           <div className="bg-card p-6 rounded-lg border space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Course Settings</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('courseSettings')}</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <FormSelect
                 name="levelId"
-                label="Course Level"
+                label={t('courseLevel')}
                 options={levelOptions}
-                placeholder="Select level"
+                placeholder={t('selectLevel')}
                 required
                 disabled={isPending}
               />
 
               <FormSelect
                 name="categoryId"
-                label="Category"
+                label={t('category')}
                 options={categoryOptions}
-                placeholder="Select category"
+                placeholder={t('selectCategory')}
                 disabled={isPending}
               />
 
               <FormSelect
                 name="teachingLanguageId"
-                label="Teaching Language"
+                label={t('teachingLanguage')}
                 options={languageOptions}
-                placeholder="Select language"
+                placeholder={t('selectLanguage')}
                 required
                 disabled={isPending}
               />
@@ -295,7 +298,7 @@ export function CourseForm({
 
           {/* Pricing */}
           <div className="bg-card p-6 rounded-lg border space-y-4">
-            <h2 className="text-xl font-semibold mb-4">Pricing</h2>
+            <h2 className="text-xl font-semibold mb-4">{t('pricing')}</h2>
 
             <div className="flex items-center space-x-2 mb-4">
               <Checkbox
@@ -315,7 +318,7 @@ export function CourseForm({
                 htmlFor="isFree"
                 className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
               >
-                This course is free
+                {t('thisCourseIsFree')}
               </label>
             </div>
 
@@ -323,7 +326,7 @@ export function CourseForm({
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <FormInput
                   name="price"
-                  label="Price"
+                  label={t('price')}
                   placeholder="99.99"
                   formType="input"
                   inputType="number"
@@ -333,7 +336,7 @@ export function CourseForm({
 
                 <FormSelect
                   name="currency"
-                  label="Currency"
+                  label={t('currency')}
                   options={[
                     { value: 'USD', label: 'USD ($)' },
                     { value: 'EUR', label: 'EUR (€)' },
@@ -348,11 +351,11 @@ export function CourseForm({
           {/* Promo Video (Optional) */}
           <div className="bg-card p-6 rounded-lg border">
             <h2 className="text-xl font-semibold mb-4">
-              Promo Video (Optional)
+              {t('promoVideoOptional')}
             </h2>
             <FormInput
               name="promoVideoUrl"
-              label="Video URL"
+              label={t('videoUrl')}
               placeholder="https://youtube.com/watch?v=..."
               formType="input"
               inputType="url"
@@ -369,11 +372,11 @@ export function CourseForm({
                 onClick={() => router.back()}
                 disabled={isPending}
               >
-                Cancel
+                {t('cancel')}
               </Button>
             )}
             <Button type="submit" disabled={isPending}>
-              {isPending ? 'Saving...' : submitLabel}
+              {isPending ? t('saving') : defaultSubmitLabel}
             </Button>
           </div>
         </form>

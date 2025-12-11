@@ -13,10 +13,10 @@ export default async function CreateCoursePage({
   const { levels, languages, categories } = await getLookupData(locale);
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-5xl">
-      <div className="mb-8 space-y-2">
+    <div className="space-y-6">
+      <div>
         <h1 className="text-3xl font-bold">{t('createCourse')}</h1>
-        <p className="text-muted-foreground text-lg">
+        <p className="text-muted-foreground mt-1">
           {t('createCourseDescription')}
         </p>
       </div>

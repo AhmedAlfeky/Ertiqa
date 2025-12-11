@@ -2,7 +2,102 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { getCurrentInstructorId, isInstructor } from './queries';
 import type { ActionResult } from './types';
+
+// ============================================
+// HELPERS (Internal)
+// ============================================
+
+async function verifyInstructorAccess() {
+  if (!(await isInstructor())) {
+    throw new Error('Unauthorized - Instructor access required');
+  }
+  const supabase = await createClient();
+  const instructorId = await getCurrentInstructorId();
+
+  if (!instructorId) {
+    throw new Error('Unauthorized');
+  }
+
+  return { supabase, instructorId };
+}
+
+/**
+ * Verifies ownership for Quiz operations.
+ * Can look up ownership starting from a Quiz (Lesson) ID or a Question ID.
+ */
+async function verifyQuizContext(
+  supabase: any,
+  instructorId: string,
+  type: 'quiz' | 'question',
+  entityId: number
+) {
+  if (type === 'quiz') {
+    // EntityId is lesson_id
+    const { data: lesson } = await supabase
+      .from('lessons')
+      .select(
+        'id, unit_id, course_units!inner(course_id, courses!inner(instructor_id))'
+      )
+      .eq('id', entityId)
+      .single();
+
+    if (
+      !lesson ||
+      (lesson as any).course_units?.courses?.instructor_id !== instructorId
+    ) {
+      throw new Error('Quiz not found or unauthorized');
+    }
+    return {
+      quizId: entityId,
+      courseId: (lesson as any).course_units.course_id,
+    };
+  } else {
+    // EntityId is question_id
+    const { data: question } = await supabase
+      .from('quiz_questions')
+      .select(
+        `
+        id, 
+        lesson_id, 
+        lessons!inner(
+          id, 
+          unit_id, 
+          course_units!inner(course_id, courses!inner(instructor_id))
+        )
+      `
+      )
+      .eq('id', entityId)
+      .single();
+
+    if (
+      !question ||
+      (question as any).lessons?.course_units?.courses?.instructor_id !==
+        instructorId
+    ) {
+      throw new Error('Question not found or unauthorized');
+    }
+    return {
+      quizId: question.lesson_id,
+      courseId: (question as any).lessons.course_units.course_id,
+    };
+  }
+}
+
+/**
+ * Centralized revalidation for Quiz specific paths
+ */
+function revalidateQuizPaths(courseId: number, quizId: number) {
+  const locales = ['ar', 'en'];
+  locales.forEach(lang => {
+    revalidatePath(
+      `/${lang}/instructor/courses/${courseId}/manage/quiz/${quizId}`
+    );
+    revalidatePath(`/${lang}/instructor/courses/${courseId}/manage`);
+    revalidatePath(`/${lang}/instructor/courses`);
+  });
+}
 
 // ============================================
 // QUESTION CRUD ACTIONS
@@ -22,9 +117,15 @@ export async function createQuizQuestion(
   quizId: number,
   data: CreateQuestionInput
 ): Promise<ActionResult<{ questionId: number }>> {
-  const supabase = await createClient();
-
   try {
+    const { supabase, instructorId } = await verifyInstructorAccess();
+    const { courseId } = await verifyQuizContext(
+      supabase,
+      instructorId,
+      'quiz',
+      quizId
+    );
+
     // Get current max order_index
     const { data: questions } = await supabase
       .from('quiz_questions')
@@ -33,7 +134,7 @@ export async function createQuizQuestion(
       .order('order_index', { ascending: false })
       .limit(1);
 
-    const nextOrder = questions && questions.length > 0 ? questions[0].order_index + 1 : 0;
+    const nextOrder = questions?.length ? questions[0].order_index + 1 : 0;
 
     // Insert question
     const { data: question, error: questionError } = await supabase
@@ -46,31 +147,28 @@ export async function createQuizQuestion(
       .select()
       .single();
 
-    if (questionError || !question) {
-      return { success: false, error: questionError?.message || 'Failed to create question' };
-    }
+    if (questionError || !question)
+      throw new Error(questionError?.message || 'Failed to create question');
 
     // Insert question translations
-    const questionTranslations = [
-      {
-        question_id: question.id,
-        language_id: 1,
-        question_text: data.question_text_ar,
-      },
-      {
-        question_id: question.id,
-        language_id: 2,
-        question_text: data.question_text_en,
-      },
-    ];
-
     const { error: questionTransError } = await supabase
       .from('quiz_question_translations')
-      .insert(questionTranslations);
+      .insert([
+        {
+          question_id: question.id,
+          language_id: 1,
+          question_text: data.question_text_ar,
+        },
+        {
+          question_id: question.id,
+          language_id: 2,
+          question_text: data.question_text_en,
+        },
+      ]);
 
     if (questionTransError) {
       await supabase.from('quiz_questions').delete().eq('id', question.id);
-      return { success: false, error: questionTransError.message };
+      throw new Error(questionTransError.message);
     }
 
     // Insert options
@@ -88,54 +186,33 @@ export async function createQuizQuestion(
         .single();
 
       if (optionError || !optionData) {
+        // Cleanup on failure
         await supabase.from('quiz_questions').delete().eq('id', question.id);
-        return { success: false, error: optionError?.message || 'Failed to create option' };
+        throw new Error(optionError?.message || 'Failed to create option');
       }
-
-      // Insert option translations
-      const optionTranslations = [
-        {
-          option_id: optionData.id,
-          language_id: 1,
-          option_text: option.option_text_ar,
-        },
-        {
-          option_id: optionData.id,
-          language_id: 2,
-          option_text: option.option_text_en,
-        },
-      ];
 
       const { error: optionTransError } = await supabase
         .from('quiz_option_translations')
-        .insert(optionTranslations);
+        .insert([
+          {
+            option_id: optionData.id,
+            language_id: 1,
+            option_text: option.option_text_ar,
+          },
+          {
+            option_id: optionData.id,
+            language_id: 2,
+            option_text: option.option_text_en,
+          },
+        ]);
 
       if (optionTransError) {
         await supabase.from('quiz_questions').delete().eq('id', question.id);
-        return { success: false, error: optionTransError.message };
+        throw new Error(optionTransError.message);
       }
     }
 
-    // Get course_id and lesson_id for revalidation
-    const { data: lesson } = await supabase
-      .from('lessons')
-      .select(`
-        id,
-        unit_id,
-        course_units!inner(course_id)
-      `)
-      .eq('id', quizId)
-      .single();
-
-    if (lesson) {
-      const courseId = (lesson as any).course_units?.course_id;
-      if (courseId) {
-        revalidatePath(`/instructor/courses/${courseId}/manage/quiz/${quizId}`);
-        revalidatePath(`/instructor/courses/${courseId}/manage`);
-      }
-    }
-    revalidatePath(`/instructor/courses`);
-
+    revalidateQuizPaths(courseId, quizId);
     return { success: true, data: { questionId: question.id } };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -146,11 +223,17 @@ export async function updateQuizQuestion(
   questionId: number,
   data: CreateQuestionInput
 ): Promise<ActionResult<void>> {
-  const supabase = await createClient();
-
   try {
-    // Update question translations
-    const questionTranslations = [
+    const { supabase, instructorId } = await verifyInstructorAccess();
+    const { courseId, quizId } = await verifyQuizContext(
+      supabase,
+      instructorId,
+      'question',
+      questionId
+    );
+
+    // Update question translations (Upsert)
+    const translations = [
       {
         question_id: questionId,
         language_id: 1,
@@ -163,20 +246,18 @@ export async function updateQuizQuestion(
       },
     ];
 
-    for (const trans of questionTranslations) {
+    for (const trans of translations) {
       const { error } = await supabase
         .from('quiz_question_translations')
         .upsert(trans, { onConflict: 'question_id,language_id' });
-
-      if (error) {
-        return { success: false, error: error.message };
-      }
+      if (error) throw new Error(error.message);
     }
 
-    // Delete existing options
+    // Replace Options
+    // 1. Delete existing
     await supabase.from('quiz_options').delete().eq('question_id', questionId);
 
-    // Insert new options
+    // 2. Insert new
     for (let i = 0; i < data.options.length; i++) {
       const option = data.options[i];
 
@@ -190,61 +271,28 @@ export async function updateQuizQuestion(
         .select()
         .single();
 
-      if (optionError || !optionData) {
-        return { success: false, error: optionError?.message || 'Failed to update option' };
-      }
-
-      const optionTranslations = [
-        {
-          option_id: optionData.id,
-          language_id: 1,
-          option_text: option.option_text_ar,
-        },
-        {
-          option_id: optionData.id,
-          language_id: 2,
-          option_text: option.option_text_en,
-        },
-      ];
+      if (optionError || !optionData)
+        throw new Error(optionError?.message || 'Failed to update option');
 
       const { error: optionTransError } = await supabase
         .from('quiz_option_translations')
-        .insert(optionTranslations);
+        .insert([
+          {
+            option_id: optionData.id,
+            language_id: 1,
+            option_text: option.option_text_ar,
+          },
+          {
+            option_id: optionData.id,
+            language_id: 2,
+            option_text: option.option_text_en,
+          },
+        ]);
 
-      if (optionTransError) {
-        return { success: false, error: optionTransError.message };
-      }
+      if (optionTransError) throw new Error(optionTransError.message);
     }
 
-    // Get course_id and lesson_id for revalidation
-    const { data: question } = await supabase
-      .from('quiz_questions')
-      .select('lesson_id')
-      .eq('id', questionId)
-      .single();
-
-    if (question) {
-      const { data: lesson } = await supabase
-        .from('lessons')
-        .select(`
-          id,
-          unit_id,
-          course_units!inner(course_id)
-        `)
-        .eq('id', (question as any).lesson_id)
-        .single();
-
-      if (lesson) {
-        const courseId = (lesson as any).course_units?.course_id;
-        const lessonId = (lesson as any).id;
-        if (courseId && lessonId) {
-          revalidatePath(`/instructor/courses/${courseId}/manage/quiz/${lessonId}`);
-          revalidatePath(`/instructor/courses/${courseId}/manage`);
-        }
-      }
-    }
-    revalidatePath(`/instructor/courses`);
-
+    revalidateQuizPaths(courseId, quizId);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
@@ -255,24 +303,18 @@ export async function updateQuizPassingScore(
   lessonId: number,
   passingScore: number
 ): Promise<ActionResult<void>> {
-  const supabase = await createClient();
-
   try {
-    // Validate passing score (0-100)
-    if (passingScore < 0 || passingScore > 100) {
-      return { success: false, error: 'Passing score must be between 0 and 100' };
-    }
+    const { supabase, instructorId } = await verifyInstructorAccess();
+    const { courseId } = await verifyQuizContext(
+      supabase,
+      instructorId,
+      'quiz',
+      lessonId
+    );
 
-    // Get course_id for revalidation
-    const { data: lesson } = await supabase
-      .from('lessons')
-      .select(`
-        id,
-        unit_id,
-        course_units!inner(course_id)
-      `)
-      .eq('id', lessonId)
-      .single();
+    if (passingScore < 0 || passingScore > 100) {
+      throw new Error('Passing score must be between 0 and 100');
+    }
 
     const { error } = await supabase
       .from('lessons')
@@ -280,67 +322,35 @@ export async function updateQuizPassingScore(
       .eq('id', lessonId)
       .eq('lesson_type', 'quiz');
 
-    if (error) {
-      return { success: false, error: error.message };
-    }
+    if (error) throw new Error(error.message);
 
-    // Revalidate pages
-    if (lesson) {
-      const courseId = (lesson as any).course_units?.course_id;
-      if (courseId) {
-        revalidatePath(`/instructor/courses/${courseId}/manage/quiz/${lessonId}`);
-        revalidatePath(`/instructor/courses/${courseId}/manage`);
-      }
-    }
-
+    revalidateQuizPaths(courseId, lessonId);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
 }
 
-export async function deleteQuizQuestion(questionId: number): Promise<ActionResult<void>> {
-  const supabase = await createClient();
-
+export async function deleteQuizQuestion(
+  questionId: number
+): Promise<ActionResult<void>> {
   try {
-    // Get lesson_id and course_id before deleting
-    const { data: question, error: fetchError } = await supabase
-      .from('quiz_questions')
-      .select(`
-        id,
-        lesson_id,
-        lessons!inner(
-          id,
-          unit_id,
-          course_units!inner(course_id)
-        )
-      `)
-      .eq('id', questionId)
-      .single();
-
-    if (fetchError || !question) {
-      return { success: false, error: fetchError?.message || 'Question not found' };
-    }
-
-    const lessonId = (question as any).lesson_id;
-    const courseId = (question as any).lessons?.course_units?.course_id;
+    const { supabase, instructorId } = await verifyInstructorAccess();
+    const { courseId, quizId } = await verifyQuizContext(
+      supabase,
+      instructorId,
+      'question',
+      questionId
+    );
 
     const { error } = await supabase
       .from('quiz_questions')
       .delete()
       .eq('id', questionId);
 
-    if (error) {
-      return { success: false, error: error.message };
-    }
+    if (error) throw new Error(error.message);
 
-    // Revalidate quiz page and course manage page
-    if (courseId && lessonId) {
-      revalidatePath(`/instructor/courses/${courseId}/manage/quiz/${lessonId}`);
-      revalidatePath(`/instructor/courses/${courseId}/manage`);
-    }
-    revalidatePath(`/instructor/courses`);
-
+    revalidateQuizPaths(courseId, quizId);
     return { success: true };
   } catch (error: any) {
     return { success: false, error: error.message };

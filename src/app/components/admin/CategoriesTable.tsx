@@ -6,6 +6,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/app/components/dashboard/DataTable';
 import { DeleteDialog } from '@/app/components/dashboard/DeleteDialog';
+import { CategoryDialog } from './CategoryDialog';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { deleteCategory } from '../../../features/admin/actions';
 import { toast } from 'sonner';
@@ -29,6 +30,8 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
 
   const handleDelete = async () => {
     if (!deleteId) return;
@@ -77,9 +80,10 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() =>
-                router.push(`/${locale}/admin/categories/${category.id}`)
-              }
+              onClick={() => {
+                setEditingCategory(category);
+                setDialogOpen(true);
+              }}
             >
               <Edit className="h-4 w-4" />
             </Button>
@@ -99,7 +103,12 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
   return (
     <div className="space-y-4">
       <div className="flex justify-end">
-        <Button onClick={() => router.push(`/${locale}/admin/categories/new`)}>
+        <Button
+          onClick={() => {
+            setEditingCategory(undefined);
+            setDialogOpen(true);
+          }}
+        >
           <Plus className="me-2 h-4 w-4" />
           {t('addCategory')}
         </Button>
@@ -120,6 +129,18 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
         description={t('deleteCategoryDescription')}
         itemName={categories.find(c => c.id === deleteId)?.name_en || ''}
         isLoading={isDeleting}
+      />
+
+      <CategoryDialog
+        open={dialogOpen}
+        onOpenChange={(open) => {
+          setDialogOpen(open);
+          if (!open) {
+            setEditingCategory(undefined);
+          }
+        }}
+        category={editingCategory}
+        locale={locale}
       />
     </div>
   );

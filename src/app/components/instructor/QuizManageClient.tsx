@@ -49,17 +49,17 @@ export function QuizManageClient({ courseId, quiz, locale }: QuizManageClientPro
     const result = await deleteQuizQuestion(questionId);
     
     if (result.success) {
-      toast.success('Question deleted successfully');
+      toast.success(t('questionDeletedSuccessfully'));
       refreshPage();
     } else {
-      toast.error(result.error || 'Failed to delete question');
+      toast.error(result.error || t('failedToDeleteQuestion'));
     }
   };
 
   const handleSavePassingScore = async () => {
     const score = parseFloat(passingScore);
     if (isNaN(score) || score < 0 || score > 100) {
-      toast.error('Passing score must be between 0 and 100');
+      toast.error(t('passingScoreMustBeBetween'));
       return;
     }
 
@@ -67,14 +67,14 @@ export function QuizManageClient({ courseId, quiz, locale }: QuizManageClientPro
     try {
       const result = await updateQuizPassingScore(quiz.id, score);
       if (result.success) {
-        toast.success('Passing score updated successfully');
+        toast.success(t('passingScoreUpdatedSuccessfully'));
         setIsEditingPassingScore(false);
         refreshPage();
       } else {
-        toast.error(result.error || 'Failed to update passing score');
+        toast.error(result.error || t('failedToUpdatePassingScore'));
       }
     } catch (error) {
-      toast.error('An error occurred');
+      toast.error(t('anErrorOccurred'));
     } finally {
       setIsSavingPassingScore(false);
     }
@@ -103,12 +103,12 @@ export function QuizManageClient({ courseId, quiz, locale }: QuizManageClientPro
               {quiz.title_ar && quiz.title_en && quiz.title_ar !== quiz.title_en && (
                 <span className="block" dir="rtl">{quiz.title_ar}</span>
               )}
-              <span className="block mt-1">Manage quiz questions and settings</span>
+              <span className="block mt-1">{t('manageQuizQuestions')}</span>
             </p>
           </div>
           <Button onClick={handleAddQuestion}>
             <Plus className="mr-2 h-4 w-4" />
-            Add Question
+            {t('addQuestion')}
           </Button>
         </div>
       </div>
@@ -119,9 +119,9 @@ export function QuizManageClient({ courseId, quiz, locale }: QuizManageClientPro
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-lg font-semibold">Quiz Information</h2>
+                <h2 className="text-lg font-semibold">{t('quizInformation')}</h2>
                 <Badge variant="secondary">
-                  {quiz.questions?.length || 0} Questions
+                  {quiz.questions?.length || 0} {t('questions')}
                 </Badge>
               </div>
               {quiz.title_ar && quiz.title_en && quiz.title_ar !== quiz.title_en && (
@@ -137,10 +137,10 @@ export function QuizManageClient({ courseId, quiz, locale }: QuizManageClientPro
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <Label htmlFor="passing-score" className="text-sm font-medium">
-                  Passing Score (%)
+                  {t('passingScorePercent')}
                 </Label>
                 <p className="text-xs text-muted-foreground">
-                  Minimum percentage students must achieve to proceed to the next lesson
+                  {t('minimumPercentageDescription')}
                 </p>
               </div>
               {isEditingPassingScore ? (
@@ -218,13 +218,13 @@ export function QuizManageClient({ courseId, quiz, locale }: QuizManageClientPro
         ) : (
           <Card className="p-12 text-center">
             <div className="max-w-md mx-auto">
-              <h3 className="text-lg font-semibold mb-2">No questions yet</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('noQuestionsYet')}</h3>
               <p className="text-muted-foreground mb-6">
-                Start adding questions to your quiz. Each question can have multiple  choice options.
+                {t('startAddingQuestions')}
               </p>
               <Button onClick={handleAddQuestion}>
                 <Plus className="mr-2 h-4 w-4" />
-                Add First Question
+                {t('addFirstQuestion')}
               </Button>
             </div>
           </Card>

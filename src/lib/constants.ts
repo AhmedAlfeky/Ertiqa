@@ -47,6 +47,8 @@ export const PUBLIC_ROUTES = [
   '/contact',
   '/privacy',
   '/terms',
+  '/instructors',
+  '/courses',
 ];
 
 export const PROTECTED_ROUTES = [

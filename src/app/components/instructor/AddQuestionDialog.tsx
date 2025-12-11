@@ -5,6 +5,7 @@ import { useForm, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import {
   Dialog,
   DialogContent,
@@ -57,6 +58,7 @@ export function AddQuestionDialog({
   question,
   onSuccess,
 }: AddQuestionDialogProps) {
+  const t = useTranslations('instructor');
   const [isPending, setIsPending] = useState(false);
   const isEditing = !!question;
 
@@ -88,7 +90,7 @@ export function AddQuestionDialog({
     // Validate at least one correct answer
     const hasCorrectAnswer = data.options.some(opt => opt.is_correct);
     if (!hasCorrectAnswer) {
-      toast.error('Please mark at least one option as correct');
+      toast.error(t('pleaseMarkAtLeastOneCorrect'));
       return;
     }
 
@@ -100,13 +102,13 @@ export function AddQuestionDialog({
         : await createQuizQuestion(quizId, data);
 
       if (result.success) {
-        toast.success(isEditing ? 'Question updated successfully' : 'Question added successfully');
+        toast.success(isEditing ? t('questionUpdatedSuccessfully') : t('questionAddedSuccessfully'));
         onSuccess();
       } else {
-        toast.error(result.error || 'Failed to save question');
+        toast.error(result.error || t('failedToSaveQuestion'));
       }
     } catch (error) {
-      toast.error('An error occurred');
+      toast.error(t('anErrorOccurred'));
     } finally {
       setIsPending(false);
     }
@@ -116,9 +118,9 @@ export function AddQuestionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Question' : 'Add New Question'}</DialogTitle>
+          <DialogTitle>{isEditing ? t('editQuestion') : t('addNewQuestion')}</DialogTitle>
           <DialogDescription>
-            Create a multiple-choice question with at least 2 options
+            {t('createMultipleChoiceQuestion')}
           </DialogDescription>
         </DialogHeader>
 
@@ -131,7 +133,7 @@ export function AddQuestionDialog({
                 name="question_text_ar"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Arabic Question *</FormLabel>
+                    <FormLabel>{t('arabicQuestion')} *</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
@@ -151,7 +153,7 @@ export function AddQuestionDialog({
                 name="question_text_en"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>English Question *</FormLabel>
+                    <FormLabel>{t('englishQuestion')} *</FormLabel>
                     <FormControl>
                       <Textarea
                         {...field}
@@ -169,7 +171,7 @@ export function AddQuestionDialog({
             {/* Answer Options */}
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <label className="text-sm font-medium">Answer Options</label>
+                <label className="text-sm font-medium">{t('answerOptions')}</label>
                 <Button
                   type="button"
                   variant="outline"
@@ -178,7 +180,7 @@ export function AddQuestionDialog({
                   disabled={isPending}
                 >
                   <Plus className="h-4 w-4 mr-1" />
-                  Add Option
+                  {t('addOption')}
                 </Button>
               </div>
 
@@ -208,7 +210,7 @@ export function AddQuestionDialog({
                       name={`options.${index}.option_text_ar`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs">Arabic</FormLabel>
+                          <FormLabel className="text-xs">{t('arabic')}</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
@@ -228,7 +230,7 @@ export function AddQuestionDialog({
                       name={`options.${index}.option_text_en`}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-xs">English</FormLabel>
+                          <FormLabel className="text-xs">{t('english')}</FormLabel>
                           <FormControl>
                             <Input
                               {...field}
@@ -267,11 +269,11 @@ export function AddQuestionDialog({
                 onClick={() => onOpenChange(false)}
                 disabled={isPending}
               >
-                Cancel
+                {t('cancel')}
               </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEditing ? 'Update Question' : 'Add Question'}
+                {isEditing ? t('updateQuestion') : t('addQuestion')}
               </Button>
             </div>
           </form>

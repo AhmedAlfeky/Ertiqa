@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 import {
   Form,
   FormControl,
@@ -63,6 +64,7 @@ export function VideoLessonForm({
   courseId,
   locale,
 }: VideoLessonFormProps) {
+  const t = useTranslations('instructor');
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const isEditing = !!lesson;
@@ -124,8 +126,8 @@ export function VideoLessonForm({
       if (result.success) {
         toast.success(
           isEditing
-            ? 'Video lesson updated successfully'
-            : 'Video lesson created successfully'
+            ? t('videoLessonUpdatedSuccessfully')
+            : t('videoLessonCreatedSuccessfully')
         );
         if (isFullPage && courseId && locale) {
           // If editing, just refresh - don't redirect
@@ -140,7 +142,7 @@ export function VideoLessonForm({
         }
       } else {
         toast.error(
-          result.error || `Failed to ${isEditing ? 'update' : 'create'} lesson`
+          result.error || (isEditing ? t('failedToUpdateLesson') : t('failedToCreateLesson'))
         );
       }
     });
@@ -152,7 +154,7 @@ export function VideoLessonForm({
         <Link href={`/${locale}/instructor/courses/${courseId}/manage`}>
           <Button variant="ghost" className="mb-4 pl-0 hover:bg-transparent">
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Curriculum
+            {t('backToCurriculum')}
           </Button>
         </Link>
       )}
@@ -169,7 +171,7 @@ export function VideoLessonForm({
                 <div className="space-y-4">
                   <FormInput
                     name="title_ar"
-                    label="Title (Arabic)"
+                    label={t('titleArabic')}
                     placeholder="عنوان الدرس"
                     formType="input"
                     inputType="text"
@@ -178,7 +180,7 @@ export function VideoLessonForm({
                   />
                   <FormInput
                     name="description_ar"
-                    label="Description (Arabic)"
+                    label={t('descriptionArabic')}
                     placeholder="وصف الدرس..."
                     formType="textarea"
                     rows={4}
@@ -190,7 +192,7 @@ export function VideoLessonForm({
                 <div className="space-y-4">
                   <FormInput
                     name="title_en"
-                    label="Title (English)"
+                    label={t('titleEnglish')}
                     placeholder="Lesson Title"
                     formType="input"
                     inputType="text"
@@ -199,7 +201,7 @@ export function VideoLessonForm({
                   />
                   <FormInput
                     name="description_en"
-                    label="Description (English)"
+                    label={t('descriptionEnglish')}
                     placeholder="Lesson description..."
                     formType="textarea"
                     rows={4}
@@ -211,15 +213,15 @@ export function VideoLessonForm({
               <div className="space-y-6">
                 <FormVideoUpload
                   name="video_url"
-                  label="Video *"
-                  description="Upload a video file or paste a video URL. Supported formats: MP4, WebM, OGG, MOV (max 500MB)"
+                  label={`${t('video')} *`}
+                  description={t('uploadVideoOrPasteUrl')}
                   maxSizeMB={500}
                   required
                 />
 
                 <FormInput
                   name="duration"
-                  label="Duration (minutes)"
+                  label={t('durationMinutes')}
                   placeholder="0"
                   formType="input"
                   inputType="number"
@@ -240,10 +242,9 @@ export function VideoLessonForm({
                       />
                     </FormControl>
                     <div className="space-y-1 leading-none">
-                      <FormLabel>Free Preview</FormLabel>
+                      <FormLabel>{t('freePreview')}</FormLabel>
                       <FormDescription>
-                        Allow students to watch this lesson without purchasing
-                        the course
+                        {t('allowStudentsToWatch')}
                       </FormDescription>
                     </div>
                   </FormItem>
@@ -258,7 +259,7 @@ export function VideoLessonForm({
                     onClick={onSuccess}
                     disabled={isPending}
                   >
-                    Cancel
+                    {t('cancel')}
                   </Button>
                 )}
                 <Button
@@ -269,7 +270,7 @@ export function VideoLessonForm({
                   {isPending && (
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                  {isEditing ? 'Update Video Lesson' : 'Create Video Lesson'}
+                  {isEditing ? t('updateVideoLesson') : t('createVideoLesson')}
                 </Button>
               </div>
             </form>

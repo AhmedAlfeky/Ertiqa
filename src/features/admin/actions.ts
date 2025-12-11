@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { isAdmin } from './queries';
 import type { ActionResult } from '../instructor/types';
 
@@ -22,7 +23,8 @@ export async function createCategory(
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for write operations
+  const supabase = createAdminClient();
 
   try {
     // Insert category
@@ -30,23 +32,28 @@ export async function createCategory(
       .from('lookup_categories')
       .insert({
         slug: data.slug,
-      })
+      } as any)
       .select()
       .single();
 
     if (categoryError || !category) {
-      return { success: false, error: categoryError?.message || 'Failed to create category' };
+      return {
+        success: false,
+        error: categoryError?.message || 'Failed to create category',
+      };
     }
+
+    const categoryId = (category as any).id;
 
     // Insert translations
     const translations = [
       {
-        category_id: category.id,
+        category_id: categoryId,
         language_id: 1,
         name: data.name_ar,
       },
       {
-        category_id: category.id,
+        category_id: categoryId,
         language_id: 2,
         name: data.name_en,
       },
@@ -54,15 +61,15 @@ export async function createCategory(
 
     const { error: translationError } = await supabase
       .from('lookup_category_translations')
-      .insert(translations);
+      .insert(translations as any);
 
     if (translationError) {
-      await supabase.from('lookup_categories').delete().eq('id', category.id);
+      await supabase.from('lookup_categories').delete().eq('id', categoryId);
       return { success: false, error: translationError.message };
     }
 
     revalidatePath('/admin/categories');
-    return { success: true, data: { categoryId: category.id } };
+    return { success: true, data: { categoryId } };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -76,11 +83,12 @@ export async function updateCategory(
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for write operations
+  const supabase = createAdminClient();
 
   try {
     // Update category slug
-    const { error: categoryError } = await supabase
+    const { error: categoryError } = await (supabase as any)
       .from('lookup_categories')
       .update({ slug: data.slug })
       .eq('id', categoryId);
@@ -106,7 +114,7 @@ export async function updateCategory(
     for (const update of updates) {
       const { error } = await supabase
         .from('lookup_category_translations')
-        .upsert(update, { onConflict: 'category_id,language_id' });
+        .upsert(update as any, { onConflict: 'category_id,language_id' });
 
       if (error) {
         return { success: false, error: error.message };
@@ -120,12 +128,15 @@ export async function updateCategory(
   }
 }
 
-export async function deleteCategory(categoryId: number): Promise<ActionResult<void>> {
+export async function deleteCategory(
+  categoryId: number
+): Promise<ActionResult<void>> {
   if (!(await isAdmin())) {
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for write operations
+  const supabase = createAdminClient();
 
   try {
     const { error } = await supabase
@@ -159,21 +170,26 @@ export async function createLevel(
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for write operations
+  const supabase = createAdminClient();
 
   try {
     const { data: level, error } = await supabase
       .from('lookup_levels')
-      .insert({ name: data.name })
+      .insert({ name: data.name } as any)
       .select()
       .single();
 
     if (error || !level) {
-      return { success: false, error: error?.message || 'Failed to create level' };
+      return {
+        success: false,
+        error: error?.message || 'Failed to create level',
+      };
     }
 
+    const levelId = (level as any).id;
     revalidatePath('/admin/levels');
-    return { success: true, data: { levelId: level.id } };
+    return { success: true, data: { levelId } };
   } catch (error: any) {
     return { success: false, error: error.message };
   }
@@ -187,10 +203,11 @@ export async function updateLevel(
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for write operations
+  const supabase = createAdminClient();
 
   try {
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from('lookup_levels')
       .update({ name: data.name })
       .eq('id', levelId);
@@ -206,12 +223,15 @@ export async function updateLevel(
   }
 }
 
-export async function deleteLevel(levelId: number): Promise<ActionResult<void>> {
+export async function deleteLevel(
+  levelId: number
+): Promise<ActionResult<void>> {
   if (!(await isAdmin())) {
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for write operations
+  const supabase = createAdminClient();
 
   try {
     const { error } = await supabase
@@ -236,34 +256,35 @@ export async function deleteLevel(levelId: number): Promise<ActionResult<void>> 
 
 export async function updateUserRole(
   userId: string,
-  roleId: number
+  newRoleId: number
 ): Promise<ActionResult<void>> {
+  // Security check: Verify user is an admin
   if (!(await isAdmin())) {
     return { success: false, error: 'Unauthorized - Admin access required' };
   }
 
-  const supabase = await createClient();
+  // Use admin client for privileged operations
+  const adminSupabase = createAdminClient();
 
   try {
-    // Update user metadata
-    const { error } = await supabase.auth.admin.updateUserById(userId, {
-      user_metadata: { role_id: roleId },
+    // Update user metadata using admin client
+    const { error } = await adminSupabase.auth.admin.updateUserById(userId, {
+      user_metadata: { role_id: newRoleId },
+      app_metadata: { role_id: newRoleId },
     });
 
     if (error) {
+      console.error('Error updating user role:', error);
       return { success: false, error: error.message };
     }
 
     revalidatePath('/admin/users');
     return { success: true };
   } catch (error: any) {
-    return { success: false, error: error.message };
+    console.error('Exception updating user role:', error);
+    return {
+      success: false,
+      error: error.message || 'Failed to update user role',
+    };
   }
 }
-
-
-
-
-
-
-

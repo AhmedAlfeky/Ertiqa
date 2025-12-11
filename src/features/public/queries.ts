@@ -1,5 +1,6 @@
 'use server';
 
+import { cache } from 'react';
 import { createClient } from '@/lib/supabase/server';
 
 type Paginated<T> = {
@@ -226,11 +227,34 @@ export async function getPublicInstructorById(id: string, locale?: string) {
     console.error('Error fetching instructor courses', coursesError);
   }
 
+  // Calculate instructor stats
+  const totalStudents = (courses || []).reduce(
+    (sum: number, course: any) => sum + (course.students_count || 0),
+    0
+  );
+  const totalLessons = (courses || []).reduce(
+    (sum: number, course: any) => sum + (course.lessons_count || 0),
+    0
+  );
+  const avgRating =
+    (courses || []).length > 0
+      ? (courses || []).reduce(
+          (sum: number, course: any) => sum + (course.avg_rating || 0),
+          0
+        ) / (courses || []).length
+      : 0;
+
   return {
     profile,
     courses: (courses || []).map(row =>
       mapCourseLocale(row as CourseRow, locale)
     ),
+    stats: {
+      totalCourses: (courses || []).length,
+      totalStudents,
+      totalLessons,
+      avgRating: Math.round(avgRating * 10) / 10,
+    },
   };
 }
 
@@ -253,7 +277,8 @@ export async function getFeaturedInstructors(limit: number = 4) {
 }
 
 // Filters
-export async function getCategories(locale?: string) {
+export const getCategories = cache(async (locale?: string) => {
+  // Use normal client for read operations (RLS allows public read)
   const supabase = await createClient();
   const langId = getLangId(locale);
   const { data, error } = await supabase
@@ -282,9 +307,10 @@ export async function getCategories(locale?: string) {
       name: t?.name || '',
     };
   });
-}
+});
 
-export async function getCategoriesWithCounts(locale?: string) {
+export const getCategoriesWithCounts = cache(async (locale?: string) => {
+  // Use normal client for read operations (RLS allows public read)
   const supabase = await createClient();
   const langId = getLangId(locale);
 
@@ -339,9 +365,10 @@ export async function getCategoriesWithCounts(locale?: string) {
   return categoriesWithCounts
     .filter(cat => cat.count > 0)
     .sort((a, b) => b.count - a.count);
-}
+});
 
-export async function getLevels() {
+export const getLevels = cache(async () => {
+  // Use normal client for read operations (RLS allows public read)
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('lookup_levels')
@@ -354,9 +381,10 @@ export async function getLevels() {
   }
 
   return data || [];
-}
+});
 
-export async function getLanguages() {
+export const getLanguages = cache(async () => {
+  // Use normal client for read operations (RLS allows public read)
   const supabase = await createClient();
   const { data, error } = await supabase
     .from('lookup_languages')
@@ -369,7 +397,7 @@ export async function getLanguages() {
   }
 
   return data || [];
-}
+});
 
 export async function getTestimonials(limit: number = 6) {
   const supabase = await createClient();
@@ -387,6 +415,33 @@ export async function getTestimonials(limit: number = 6) {
 
   return data || [];
 }
+
+// Get unique specializations from instructors
+export const getInstructorSpecializations = cache(
+  async (): Promise<string[]> => {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('specialization')
+      .eq('is_instructor', true)
+      .not('specialization', 'is', null);
+
+    if (error) {
+      console.error('Error fetching specializations', error);
+      return [];
+    }
+
+    // Get unique specializations and filter out empty strings
+    const specializations = new Set<string>();
+    (data || []).forEach((profile: any) => {
+      if (profile.specialization && profile.specialization.trim()) {
+        specializations.add(profile.specialization.trim());
+      }
+    });
+
+    return Array.from(specializations).sort();
+  }
+);
 
 export async function checkEnrollment(userId: string | null, courseId: number) {
   if (!userId) return false;

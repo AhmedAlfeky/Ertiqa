@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useTranslations } from 'next-intl';
 
 interface User {
   id: string;
@@ -34,28 +35,24 @@ interface UsersTableProps {
   locale: string;
 }
 
-const ROLE_NAMES: Record<number, string> = {
-  1: 'Student',
-  2: 'Instructor',
-  4: 'Admin',
-};
-
 export function UsersTable({ users, locale }: UsersTableProps) {
+  const t = useTranslations('admin');
   const router = useRouter();
   const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
+  const isRTL = locale === 'ar';
 
   const handleRoleChange = async (userId: string, roleId: number) => {
     setUpdatingUserId(userId);
     try {
       const result = await updateUserRole(userId, roleId);
       if (result.success) {
-        toast.success('User role updated successfully');
+        toast.success(t('userRoleUpdated'));
         router.refresh();
       } else {
-        toast.error(result.error || 'Failed to update user role');
+        toast.error(result.error || t('userRoleUpdateFailed'));
       }
     } catch (error) {
-      toast.error('An error occurred');
+      toast.error(t('errorOccurred'));
     } finally {
       setUpdatingUserId(null);
     }
@@ -64,7 +61,7 @@ export function UsersTable({ users, locale }: UsersTableProps) {
   const columns: ColumnDef<User>[] = [
     {
       accessorKey: 'full_name',
-      header: 'User',
+      header: t('user'),
       cell: ({ row }) => {
         const user = row.original;
         return (
@@ -77,7 +74,7 @@ export function UsersTable({ users, locale }: UsersTableProps) {
               </AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-medium">{user.full_name || 'No name'}</div>
+              <div className="font-medium">{user.full_name || t('noName')}</div>
               <div className="text-sm text-muted-foreground">{user.email}</div>
             </div>
           </div>
@@ -86,7 +83,7 @@ export function UsersTable({ users, locale }: UsersTableProps) {
     },
     {
       accessorKey: 'role_name',
-      header: 'Role',
+      header: t('role'),
       cell: ({ row }) => {
         const user = row.original;
         return (
@@ -94,14 +91,15 @@ export function UsersTable({ users, locale }: UsersTableProps) {
             value={user.role_id?.toString() || '1'}
             onValueChange={value => handleRoleChange(user.id, parseInt(value))}
             disabled={updatingUserId === user.id}
+            dir={isRTL ? 'rtl' : 'ltr'}
           >
             <SelectTrigger className="w-32">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="1">Student</SelectItem>
-              <SelectItem value="2">Instructor</SelectItem>
-              <SelectItem value="4">Admin</SelectItem>
+            <SelectContent dir={isRTL ? 'rtl' : 'ltr'}>
+              <SelectItem value="1">{t('student')}</SelectItem>
+              <SelectItem value="2">{t('instructor')}</SelectItem>
+              <SelectItem value="5">{t('admin')}</SelectItem>
             </SelectContent>
           </Select>
         );
@@ -109,16 +107,16 @@ export function UsersTable({ users, locale }: UsersTableProps) {
     },
     {
       accessorKey: 'is_instructor',
-      header: 'Status',
+      header: t('status'),
       cell: ({ row }) => {
         const user = row.original;
         return (
           <div className="flex gap-2">
             {user.is_instructor && (
-              <Badge variant="secondary">Instructor</Badge>
+              <Badge variant="secondary">{t('instructor')}</Badge>
             )}
             {user.instructor_verified && (
-              <Badge variant="default">Verified</Badge>
+              <Badge variant="default">{t('verified')}</Badge>
             )}
           </div>
         );
@@ -126,7 +124,7 @@ export function UsersTable({ users, locale }: UsersTableProps) {
     },
     {
       accessorKey: 'created_at',
-      header: 'Joined',
+      header: t('joined'),
       cell: ({ row }) => {
         const date = new Date(row.getValue('created_at'));
         return date.toLocaleDateString();
@@ -139,7 +137,7 @@ export function UsersTable({ users, locale }: UsersTableProps) {
       columns={columns}
       data={users}
       searchKey="email"
-      searchPlaceholder="Search users by email..."
+      searchPlaceholder={t('searchUsersByEmail')}
     />
   );
 }

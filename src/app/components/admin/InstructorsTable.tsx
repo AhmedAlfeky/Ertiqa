@@ -7,6 +7,7 @@ import { DataTable } from '@/app/components/dashboard/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Eye } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface Instructor {
   id: string;
@@ -23,13 +24,17 @@ interface InstructorsTableProps {
   locale: string;
 }
 
-export function InstructorsTable({ instructors, locale }: InstructorsTableProps) {
+export function InstructorsTable({
+  instructors,
+  locale,
+}: InstructorsTableProps) {
+  const t = useTranslations('admin');
   const router = useRouter();
 
   const columns: ColumnDef<Instructor>[] = [
     {
       accessorKey: 'full_name',
-      header: 'Instructor',
+      header: t('instructor'),
       cell: ({ row }) => {
         const instructor = row.original;
         return (
@@ -41,9 +46,13 @@ export function InstructorsTable({ instructors, locale }: InstructorsTableProps)
               </AvatarFallback>
             </Avatar>
             <div>
-              <div className="font-medium">{instructor.full_name || 'No name'}</div>
+              <div className="font-medium">
+                {instructor.full_name || t('noName')}
+              </div>
               {instructor.specialization && (
-                <div className="text-sm text-muted-foreground">{instructor.specialization}</div>
+                <div className="text-sm text-muted-foreground">
+                  {instructor.specialization}
+                </div>
               )}
             </div>
           </div>
@@ -52,12 +61,14 @@ export function InstructorsTable({ instructors, locale }: InstructorsTableProps)
     },
     {
       accessorKey: 'instructor_verified',
-      header: 'Status',
+      header: t('status'),
       cell: ({ row }) => {
         const instructor = row.original;
         return (
-          <Badge variant={instructor.instructor_verified ? 'default' : 'secondary'}>
-            {instructor.instructor_verified ? 'Verified' : 'Pending'}
+          <Badge
+            variant={instructor.instructor_verified ? 'default' : 'secondary'}
+          >
+            {instructor.instructor_verified ? t('verified') : t('pending')}
           </Badge>
         );
       },
@@ -70,10 +81,12 @@ export function InstructorsTable({ instructors, locale }: InstructorsTableProps)
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => router.push(`/${locale}/admin/instructors/${instructor.id}`)}
+            onClick={() =>
+              router.push(`/${locale}/admin/instructors/${instructor.id}`)
+            }
           >
-            <Eye className="h-4 w-4 mr-2" />
-            View Details
+            <Eye className="h-4 w-4 me-2" />
+            {t('viewDetails')}
           </Button>
         );
       },
@@ -85,10 +98,7 @@ export function InstructorsTable({ instructors, locale }: InstructorsTableProps)
       columns={columns}
       data={instructors}
       searchKey="full_name"
-      searchPlaceholder="Search instructors..."
+      searchPlaceholder={t('searchInstructors')}
     />
   );
 }
-
-
-

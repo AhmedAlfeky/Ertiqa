@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { SettingsForm } from '@/features/settings/components/SettingsForm';
 import { isAdmin } from '@/features/admin/queries';
 import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
 
 export default async function AdminSettingsPage({
   params,
@@ -9,6 +10,7 @@ export default async function AdminSettingsPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'admin' });
   const supabase = await createClient();
   
   const userIsAdmin = await isAdmin();
@@ -32,10 +34,10 @@ export default async function AdminSettingsPage({
     .single();
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mt-1">
           Manage your profile and account settings
         </p>
       </div>

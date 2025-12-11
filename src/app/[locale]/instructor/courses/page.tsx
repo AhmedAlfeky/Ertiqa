@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import { getInstructorCourses, getCurrentInstructorId } from '@/features/instructor/queries';
+import { isAdmin } from '@/features/admin/queries';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -25,6 +26,11 @@ export default async function InstructorCoursesPage({
   const resolvedSearchParams = await searchParams;
   const t = await getTranslations('instructor');
   
+  // If the current user is an admin (role_id 5), redirect them to the admin dashboard
+  if (await isAdmin()) {
+    redirect(`/${locale}/admin/dashboard`);
+  }
+
   const instructorId = await getCurrentInstructorId();
 
   if (!instructorId) {

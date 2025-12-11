@@ -13,7 +13,7 @@ export default async function InstructorDetailPage({
   params: Promise<{ instructorId: string; locale: string }>;
 }) {
   const { instructorId, locale } = await params;
-  const t = await getTranslations('admin');
+  const t = await getTranslations({ locale, namespace: 'admin' });
 
   if (!(await isAdmin())) {
     redirect(`/${locale}/login`);
@@ -26,13 +26,13 @@ export default async function InstructorDetailPage({
   }
 
   return (
-    <div className="container py-8 space-y-6">
+    <div className="space-y-6">
       <Link
         href={`/${locale}/admin/instructors`}
         className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors group"
       >
-        <ArrowLeft className="mr-2 h-4 w-4 group-hover:-translate-x-1 transition-transform" />
-        Back to Instructors
+        <ArrowLeft className="me-2 h-4 w-4 transition-transform group-hover:-translate-x-1 rtl:rotate-180 rtl:group-hover:translate-x-1" />
+        {t('backToInstructors')}
       </Link>
 
       <InstructorDetails instructor={instructor} locale={locale} />

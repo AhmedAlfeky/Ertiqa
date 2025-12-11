@@ -9,6 +9,7 @@ import { DeleteDialog } from '@/app/components/dashboard/DeleteDialog';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { deleteLevel } from '../../../features/admin/actions';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface Level {
   id: number;
@@ -22,6 +23,7 @@ interface LevelsTableProps {
 }
 
 export function LevelsTable({ levels, locale }: LevelsTableProps) {
+  const t = useTranslations('admin');
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -33,13 +35,13 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
     try {
       const result = await deleteLevel(deleteId);
       if (result.success) {
-        toast.success('Level deleted successfully');
+        toast.success(t('levelDeleted'));
         router.refresh();
       } else {
-        toast.error(result.error || 'Failed to delete level');
+        toast.error(result.error || t('levelDeleteFailed'));
       }
     } catch (error) {
-      toast.error('An error occurred');
+      toast.error(t('errorOccurred'));
     } finally {
       setIsDeleting(false);
       setDeleteId(null);
@@ -49,11 +51,11 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
   const columns: ColumnDef<Level>[] = [
     {
       accessorKey: 'id',
-      header: 'ID',
+      header: t('id'),
     },
     {
       accessorKey: 'name',
-      header: 'Name',
+      header: t('name'),
     },
     {
       id: 'actions',
@@ -85,8 +87,8 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
     <div className="space-y-4">
       <div className="flex justify-end">
         <Button onClick={() => router.push(`/${locale}/admin/levels/new`)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Level
+          <Plus className="me-2 h-4 w-4" />
+          {t('addLevel')}
         </Button>
       </div>
 
@@ -94,15 +96,15 @@ export function LevelsTable({ levels, locale }: LevelsTableProps) {
         columns={columns}
         data={levels}
         searchKey="name"
-        searchPlaceholder="Search levels..."
+        searchPlaceholder={t('searchLevels')}
       />
 
       <DeleteDialog
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        title="Delete Level"
-        description="Are you sure you want to delete this level? This action cannot be undone."
+        title={t('deleteLevel')}
+        description={t('deleteLevelDescription')}
         itemName={levels.find(l => l.id === deleteId)?.name || ''}
         isLoading={isDeleting}
       />

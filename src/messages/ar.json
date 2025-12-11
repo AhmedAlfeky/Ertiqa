@@ -111,5 +111,161 @@
     "deleteUnitDescription": "هل أنت متأكد من حذف هذه الوحدة؟ سيتم حذف جميع الدروس في هذه الوحدة أيضاً. لا يمكن التراجع عن هذا الإجراء.",
     "deleteUnit": "حذف الوحدة",
     "editUnit": "تعديل الوحدة"
+  },
+  "Navbar": {
+    "home": "الرئيسية",
+    "about": "عن المنصة",
+    "courses": "الدورات",
+    "instructors": "المدربون",
+    "blog": "المدونة",
+    "login": "تسجيل الدخول",
+    "signup": "إنشاء حساب"
+  },
+  "landing": {
+    "hero": {
+      "tagline": "تجربة مجانية لمدة 50 يوماً",
+      "titleLine1": "ابنِ مهاراتك",
+      "titleLine2": "على",
+      "titleHighlight": "أفضل",
+      "titleLine3": "منصة تعليمية",
+      "description": "اكتشف دورات غير محدودة تناسب اهتماماتك لتسريع عملية تطوير مهاراتك المهنية.",
+      "ctaPrimary": "ابدأ الآن",
+      "ctaSecondary": "شاهد الفيديو",
+      "certified": "شهادة",
+      "getRecognized": "احترافية",
+      "statsExperience": "مدربون ذوو خبرة",
+      "statsQuality": "دورات عالية الجودة",
+      "statsStudentsLabel": "طلاب نشطون",
+      "studentsCount": "10K+ طالب",
+      "joinedUs": "انضم إلينا",
+      "coursesCount": "100+ دورة",
+      "statsStudents": "50K+",
+      "statsRating": "4.8/5",
+      "students": "طالب",
+      "rating": "تقييم"
+    },
+    "whyChooseUs": {
+      "title": "لماذا تختارنا؟",
+      "subtitle": "منصة خفيفة بألوان فاتحة وتجربة سلسة، مع محتوى عربي وإنجليزي.",
+      "features": {
+        "certifiedTrainers": {
+          "title": "مدربون معتمدون",
+          "description": "خبرة عملية وشهادات موثقة."
+        },
+        "freshContent": {
+          "title": "محتوى متجدد",
+          "description": "دورات ومناهج يتم تحديثها باستمرار."
+        },
+        "accreditedCertificates": {
+          "title": "شهادات معتمدة",
+          "description": "إثبات رسمي لمهاراتك بعد إتمام الدورات."
+        }
+      },
+      "badges": {
+        "expertVerified": "خبراء موثوقون",
+        "weeklyUpdates": "تحديثات أسبوعية",
+        "intlRecognized": "اعتراف دولي"
+      },
+      "explore": "استكشف"
+    },
+    "featuredCourses": {
+      "title": "دورات مميزة",
+      "subtitle": "ابدأ بأكثر الدورات شعبية الآن.",
+      "viewAll": "عرض الكل"
+    },
+    "instructors": {
+      "title": "مدربونا",
+      "subtitle": "تعرف على خبرات فريق التدريب.",
+      "viewAll": "عرض الكل"
+    },
+    "testimonials": {
+      "title": "آراء المتعلمين",
+      "subtitle": "قصص نجاح من مجتمعنا."
+    },
+    "cta": {
+      "title": "جاهز للبدء؟",
+      "description": "انضم إلى آلاف المتعلمين الذين بدأوا رحلتهم مع إرتقاء.",
+      "signup": "سجل الآن",
+      "browse": "تصفح الدورات",
+      "badge": "عرض لفترة محدودة"
+    },
+    "courseCategories": {
+      "subtitle": "الفئات",
+      "title": "اكتشف الدورات التي تناسب شغفك",
+      "btn": "تصفح كل الفئات",
+      "categories": {
+        "design": "التصميم والإبداع",
+        "tech": "البرمجة والتقنية",
+        "business": "إدارة الأعمال والتسويق",
+        "photo": "التصوير والفنون البصرية",
+        "personal": "التطوير الشخصي",
+        "language": "اللغات",
+        "health": "الصحة واللياقة البدنية",
+        "music": "الموسيقى والصوت"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": "لوحة التحكم",
+    "users": "المستخدمون",
+    "instructors": "المدربون",
+    "categories": "الفئات",
+    "levels": "المستويات",
+    "settings": "الإعدادات",
+    "adminPortal": "بوابة الإدارة",
+    "navigation": "التنقل",
+    "logout": "تسجيل الخروج",
+    "loading": "جاري التحميل...",
+    "filter": "تصفية",
+    "search": "بحث...",
+    "noResults": "لا توجد نتائج.",
+    "id": "المعرف",
+    "slug": "الرابط",
+    "name": "الاسم",
+    "nameEnglish": "الاسم (إنجليزي)",
+    "nameArabic": "الاسم (عربي)",
+    "user": "المستخدم",
+    "role": "الدور",
+    "status": "الحالة",
+    "joined": "تاريخ الانضمام",
+    "student": "طالب",
+    "instructor": "مدرب",
+    "admin": "مدير",
+    "verified": "موثق",
+    "pending": "قيد الانتظار",
+    "noName": "لا يوجد اسم",
+    "viewDetails": "عرض التفاصيل",
+    "addCategory": "إضافة فئة",
+    "addLevel": "إضافة مستوى",
+    "searchCategories": "بحث في الفئات...",
+    "searchLevels": "بحث في المستويات...",
+    "searchInstructors": "بحث في المدربين...",
+    "searchUsersByEmail": "بحث المستخدمين بالبريد الإلكتروني...",
+    "deleteCategory": "حذف الفئة",
+    "deleteLevel": "حذف المستوى",
+    "deleteCategoryDescription": "هل أنت متأكد من حذف هذه الفئة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "deleteLevelDescription": "هل أنت متأكد من حذف هذا المستوى؟ لا يمكن التراجع عن هذا الإجراء.",
+    "categoryDeleted": "تم حذف الفئة بنجاح",
+    "categoryDeleteFailed": "فشل حذف الفئة",
+    "levelDeleted": "تم حذف المستوى بنجاح",
+    "levelDeleteFailed": "فشل حذف المستوى",
+    "userRoleUpdated": "تم تحديث دور المستخدم بنجاح",
+    "userRoleUpdateFailed": "فشل تحديث دور المستخدم",
+    "errorOccurred": "حدث خطأ",
+    "backToInstructors": "العودة إلى المدربين",
+    "allCourses": "كل الدورات",
+    "allCoursesSubtitle": "تصفح وراجع جميع الدورات في المنصة",
+    "manageCategories": "إدارة فئات الدورات",
+    "manageLevels": "إدارة مستويات الدورات",
+    "manageUsers": "إدارة جميع المستخدمين وأدوارهم",
+    "manageInstructors": "تصفح وإدارة المدربين",
+    "newCategory": "فئة جديدة",
+    "editCategory": "تعديل الفئة",
+    "createCategoryDescription": "إنشاء فئة دورة جديدة",
+    "editCategoryDescription": "تحديث معلومات الفئة",
+    "newLevel": "مستوى جديد",
+    "editLevel": "تعديل المستوى",
+    "createLevelDescription": "إنشاء مستوى دورة جديد",
+    "editLevelDescription": "تحديث معلومات المستوى"
   }
 }

@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { SettingsForm } from '@/features/settings/components/SettingsForm';
 import { createClient } from '@/lib/supabase/server';
+import MaxWidthWrapper from '@/app/components/MaxwidthWrapper';
 
 export default async function StudentSettingsPage({
   params,
@@ -25,20 +26,22 @@ export default async function StudentSettingsPage({
     .single();
 
   return (
-    <div className="container mx-auto max-w-4xl p-6 space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
-        <p className="text-muted-foreground">
-          Manage your profile and account settings
-        </p>
-      </div>
+    <MaxWidthWrapper>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+          <p className="text-muted-foreground">
+            Manage your profile and account settings
+          </p>
+        </div>
 
-      <SettingsForm 
-        user={user} 
-        profile={profile} 
-        locale={locale}
-      />
-    </div>
+        <SettingsForm 
+          user={user} 
+          profile={profile} 
+          locale={locale}
+        />
+      </div>
+    </MaxWidthWrapper>
   );
 }
 

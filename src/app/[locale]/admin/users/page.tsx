@@ -11,7 +11,7 @@ export default async function AdminUsersPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations('admin');
+  const t = await getTranslations({ locale, namespace: 'admin' });
 
   if (!(await isAdmin())) {
     redirect(`/${locale}/login`);
@@ -20,7 +20,7 @@ export default async function AdminUsersPage({
   const users = await getAllUsersWithRoles();
 
   return (
-    <div className="container py-8 space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">{t('users') || 'Users'}</h1>
         <p className="text-muted-foreground mt-1">

@@ -1,31 +1,19 @@
 'use client';
 
-import { useState } from 'react';
+import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import * as z from 'zod';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { toast } from 'sonner';
+import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-import { Loader2 } from 'lucide-react';
-import { updateProfile } from '../actions';
+import { FormInput, FormImageUpload } from '@/app/components/form';
+import {
+  updateProfileSchema,
+  type UpdateProfileInput,
+} from '@/features/settings/schemas';
+import { updateProfile } from '@/features/settings/actions';
 import type { User } from '@supabase/supabase-js';
-
-const profileSchema = z.object({
-  full_name: z.string().min(2, 'Name must be at least 2 characters'),
-  bio: z.string().optional(),
-  phone: z.string().optional(),
-  specialization: z.string().optional(),
-  linkedin_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-  twitter_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-  website_url: z.string().url('Invalid URL').optional().or(z.literal('')),
-});
-
-type ProfileFormValues = z.infer<typeof profileSchema>;
 
 interface SettingsFormProps {
   user: User;
@@ -35,226 +23,202 @@ interface SettingsFormProps {
 
 export function SettingsForm({ user, profile, locale }: SettingsFormProps) {
   const router = useRouter();
-  const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileSchema),
+  const form = useForm<UpdateProfileInput>({
+    resolver: zodResolver(updateProfileSchema),
     defaultValues: {
       full_name: profile?.full_name || user.user_metadata?.full_name || '',
-      bio: profile?.bio || '',
-      phone: profile?.phone || '',
-      specialization: profile?.specialization || '',
+      bio: profile?.bio || user.user_metadata?.bio || '',
+      phone: profile?.phone || user.user_metadata?.phone || '',
+      specialization: profile?.specialization || user.user_metadata?.specialization || '',
+      avatar_url: profile?.avatar_url || user.user_metadata?.avatar_url || '',
       linkedin_url: profile?.linkedin_url || '',
       twitter_url: profile?.twitter_url || '',
       website_url: profile?.website_url || '',
+      facebook_url: profile?.facebook_url || '',
+      instagram_url: profile?.instagram_url || '',
+      youtube_url: profile?.youtube_url || '',
     },
   });
 
-  const onSubmit = async (data: ProfileFormValues) => {
-    setIsLoading(true);
-    try {
+  const handleSubmit = async (data: UpdateProfileInput) => {
+    startTransition(async () => {
       const result = await updateProfile(user.id, data, locale);
-      
+
       if (result.success) {
-        toast({
-          title: 'Success',
-          description: 'Profile updated successfully',
-        });
+        toast.success('Profile updated successfully');
         router.refresh();
       } else {
-        toast({
-          title: 'Error',
-          description: result.error || 'Failed to update profile',
-          variant: 'destructive',
-        });
+        toast.error(result.error || 'Failed to update profile');
       }
-    } catch (error) {
-      toast({
-        title: 'Error',
-        description: 'An unexpected error occurred',
-        variant: 'destructive',
-      });
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-      {/* Basic Information */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Basic Information</CardTitle>
-          <CardDescription>Update your personal details</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              value={user.email}
-              disabled
-              className="bg-muted"
+    <FormProvider {...form}>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+          {/* Profile Picture */}
+          <div className="bg-card p-6 rounded-lg border space-y-4">
+            <h2 className="text-xl font-semibold mb-4">Profile Picture</h2>
+            <FormImageUpload
+              name="avatar_url"
+              label="Avatar"
+              description="Upload your profile picture (max 5MB)"
+              bucket="avatars"
+              folder="user-avatars"
+              maxSizeMB={5}
             />
-            <p className="text-xs text-muted-foreground">
-              Email cannot be changed
+          </div>
+
+          {/* Basic Information */}
+          <div className="bg-card p-6 rounded-lg border space-y-4">
+            <h2 className="text-xl font-semibold mb-4">Basic Information</h2>
+
+            <FormInput
+              name="full_name"
+              label="Full Name"
+              placeholder="Enter your full name"
+              formType="input"
+              inputType="text"
+              required
+              disabled={isPending}
+            />
+
+            <FormInput
+              name="phone"
+              label="Phone Number"
+              placeholder="Enter your phone number"
+              formType="phone"
+              disabled={isPending}
+            />
+
+            <FormInput
+              name="bio"
+              label="Bio"
+              placeholder="Tell us about yourself..."
+              formType="textarea"
+              disabled={isPending}
+              rows={5}
+            />
+          </div>
+
+          {/* Professional Information (for instructors) */}
+          {(profile?.is_instructor || user.user_metadata?.role === 'INSTRUCTOR') && (
+            <div className="bg-card p-6 rounded-lg border space-y-4">
+              <h2 className="text-xl font-semibold mb-4">Professional Information</h2>
+
+              <FormInput
+                name="specialization"
+                label="Specialization"
+                placeholder="e.g., Web Development, Data Science, Design"
+                formType="input"
+                inputType="text"
+                disabled={isPending}
+              />
+            </div>
+          )}
+
+          {/* Social Links */}
+          <div className="bg-card p-6 rounded-lg border space-y-4">
+            <h2 className="text-xl font-semibold mb-4">Social Links</h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FormInput
+                name="website_url"
+                label="Website"
+                placeholder="https://yourwebsite.com"
+                formType="input"
+                inputType="url"
+                disabled={isPending}
+              />
+
+              <FormInput
+                name="linkedin_url"
+                label="LinkedIn"
+                placeholder="https://linkedin.com/in/yourprofile"
+                formType="input"
+                inputType="url"
+                disabled={isPending}
+              />
+
+              <FormInput
+                name="twitter_url"
+                label="Twitter/X"
+                placeholder="https://twitter.com/yourhandle"
+                formType="input"
+                inputType="url"
+                disabled={isPending}
+              />
+
+              <FormInput
+                name="facebook_url"
+                label="Facebook"
+                placeholder="https://facebook.com/yourprofile"
+                formType="input"
+                inputType="url"
+                disabled={isPending}
+              />
+
+              <FormInput
+                name="instagram_url"
+                label="Instagram"
+                placeholder="https://instagram.com/yourhandle"
+                formType="input"
+                inputType="url"
+                disabled={isPending}
+              />
+
+              <FormInput
+                name="youtube_url"
+                label="YouTube"
+                placeholder="https://youtube.com/@yourchannel"
+                formType="input"
+                inputType="url"
+                disabled={isPending}
+              />
+            </div>
+          </div>
+
+          {/* Account Information (Read-only) */}
+          <div className="bg-card p-6 rounded-lg border space-y-4">
+            <h2 className="text-xl font-semibold mb-4">Account Information</h2>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium leading-none">
+                Email
+              </label>
+              <input
+                type="email"
+                value={user.email || ''}
+                disabled
+                className="flex h-10 w-full rounded-md border border-input bg-muted px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              />
+            </div>
+
+            <p className="text-sm text-muted-foreground">
+              Email cannot be changed. Contact support if you need to update your email.
             </p>
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="full_name">Full Name *</Label>
-            <Input
-              id="full_name"
-              {...register('full_name')}
-              placeholder="John Doe"
-            />
-            {errors.full_name && (
-              <p className="text-sm text-destructive">{errors.full_name.message}</p>
-            )}
+          {/* Submit Button */}
+          <div className="flex justify-end gap-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => router.back()}
+              disabled={isPending}
+            >
+              Cancel
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? 'Saving...' : 'Save Changes'}
+            </Button>
           </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="phone">Phone Number</Label>
-            <Input
-              id="phone"
-              {...register('phone')}
-              placeholder="+1234567890"
-            />
-            {errors.phone && (
-              <p className="text-sm text-destructive">{errors.phone.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              {...register('bio')}
-              placeholder="Tell us about yourself..."
-              rows={4}
-            />
-            {errors.bio && (
-              <p className="text-sm text-destructive">{errors.bio.message}</p>
-            )}
-          </div>
-
-          {profile?.is_instructor && (
-            <div className="space-y-2">
-              <Label htmlFor="specialization">Specialization</Label>
-              <Input
-                id="specialization"
-                {...register('specialization')}
-                placeholder="Web Development, Design, etc."
-              />
-              {errors.specialization && (
-                <p className="text-sm text-destructive">{errors.specialization.message}</p>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-
-      {/* Social Links */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Social Links</CardTitle>
-          <CardDescription>Connect your social media profiles</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="linkedin_url">LinkedIn URL</Label>
-            <Input
-              id="linkedin_url"
-              {...register('linkedin_url')}
-              placeholder="https://linkedin.com/in/username"
-            />
-            {errors.linkedin_url && (
-              <p className="text-sm text-destructive">{errors.linkedin_url.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="twitter_url">Twitter URL</Label>
-            <Input
-              id="twitter_url"
-              {...register('twitter_url')}
-              placeholder="https://twitter.com/username"
-            />
-            {errors.twitter_url && (
-              <p className="text-sm text-destructive">{errors.twitter_url.message}</p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="website_url">Website URL</Label>
-            <Input
-              id="website_url"
-              {...register('website_url')}
-              placeholder="https://yourwebsite.com"
-            />
-            {errors.website_url && (
-              <p className="text-sm text-destructive">{errors.website_url.message}</p>
-            )}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Account Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Account Information</CardTitle>
-          <CardDescription>View your account details</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Account Type:</span>
-            <span className="font-medium">
-              {profile?.is_instructor ? 'Instructor' : 'Student'}
-            </span>
-          </div>
-          {profile?.is_instructor && (
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Verification Status:</span>
-              <span className={`font-medium ${profile.instructor_verified ? 'text-green-600' : 'text-orange-600'}`}>
-                {profile.instructor_verified ? 'Verified' : 'Pending'}
-              </span>
-            </div>
-          )}
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Member Since:</span>
-            <span className="font-medium">
-              {new Date(profile?.created_at || user.created_at).toLocaleDateString()}
-            </span>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Submit Button */}
-      <div className="flex justify-end gap-4">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={() => router.back()}
-          disabled={isLoading}
-        >
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isLoading}>
-          {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-          Save Changes
-        </Button>
-      </div>
-    </form>
+        </form>
+      </Form>
+    </FormProvider>
   );
 }
-
-
-
-
 

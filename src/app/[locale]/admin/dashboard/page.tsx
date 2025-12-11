@@ -4,6 +4,7 @@ import { Users, BookOpen, GraduationCap, Tag } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { getAllUsersCount, getAllInstructorsCount } from '@/features/admin/queries';
 import { createClient } from '@/lib/supabase/server';
+import { getTranslations } from 'next-intl/server';
 
 async function DashboardStats() {
   const supabase = await createClient();
@@ -108,12 +109,13 @@ export default async function AdminDashboardPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'admin' });
 
   return (
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground mt-1">
           Welcome to the admin dashboard. Manage your platform here.
         </p>
       </div>

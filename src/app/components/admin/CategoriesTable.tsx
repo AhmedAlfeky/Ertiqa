@@ -9,6 +9,7 @@ import { DeleteDialog } from '@/app/components/dashboard/DeleteDialog';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import { deleteCategory } from '../../../features/admin/actions';
 import { toast } from 'sonner';
+import { useTranslations } from 'next-intl';
 
 interface Category {
   id: number;
@@ -24,6 +25,7 @@ interface CategoriesTableProps {
 }
 
 export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
+  const t = useTranslations('admin');
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -35,13 +37,13 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
     try {
       const result = await deleteCategory(deleteId);
       if (result.success) {
-        toast.success('Category deleted successfully');
+        toast.success(t('categoryDeleted'));
         router.refresh();
       } else {
-        toast.error(result.error || 'Failed to delete category');
+        toast.error(result.error || t('categoryDeleteFailed'));
       }
     } catch (error) {
-      toast.error('An error occurred');
+      toast.error(t('errorOccurred'));
     } finally {
       setIsDeleting(false);
       setDeleteId(null);
@@ -51,19 +53,19 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
   const columns: ColumnDef<Category>[] = [
     {
       accessorKey: 'id',
-      header: 'ID',
+      header: t('id'),
     },
     {
       accessorKey: 'slug',
-      header: 'Slug',
+      header: t('slug'),
     },
     {
       accessorKey: 'name_en',
-      header: 'Name (English)',
+      header: t('nameEnglish'),
     },
     {
       accessorKey: 'name_ar',
-      header: 'Name (Arabic)',
+      header: t('nameArabic'),
       cell: ({ row }) => <span dir="rtl">{row.getValue('name_ar')}</span>,
     },
     {
@@ -98,8 +100,8 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
     <div className="space-y-4">
       <div className="flex justify-end">
         <Button onClick={() => router.push(`/${locale}/admin/categories/new`)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Category
+          <Plus className="me-2 h-4 w-4" />
+          {t('addCategory')}
         </Button>
       </div>
 
@@ -107,15 +109,15 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
         columns={columns}
         data={categories}
         searchKey="name_en"
-        searchPlaceholder="Search categories..."
+        searchPlaceholder={t('searchCategories')}
       />
 
       <DeleteDialog
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        title="Delete Category"
-        description="Are you sure you want to delete this category? This action cannot be undone."
+        title={t('deleteCategory')}
+        description={t('deleteCategoryDescription')}
         itemName={categories.find(c => c.id === deleteId)?.name_en || ''}
         isLoading={isDeleting}
       />

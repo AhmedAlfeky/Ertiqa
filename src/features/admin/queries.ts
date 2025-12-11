@@ -7,7 +7,9 @@ import { ROLE_IDS } from '@/lib/constants';
 // Check if user is admin
 export async function isAdmin(): Promise<boolean> {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
   if (!user) return false;
 
@@ -15,13 +17,19 @@ export async function isAdmin(): Promise<boolean> {
   const roleId = user.user_metadata?.role_id || user.app_metadata?.role_id;
   const roleName = user.user_metadata?.role || user.app_metadata?.role;
 
-  return roleId === ROLE_IDS.ADMIN || roleName === 'ADMIN' || roleName === 'admin';
+  return (
+    roleId === ROLE_IDS.ADMIN || roleName === 'ADMIN' || roleName === 'admin'
+  );
 }
 
 // Get count of all users
 export async function getAllUsersCount(): Promise<number> {
+  if (!(await isAdmin())) {
+    return 0;
+  }
+
   const supabase = await createClient();
-  
+
   const { count, error } = await supabase
     .from('user_profiles')
     .select('*', { count: 'exact', head: true });
@@ -36,8 +44,12 @@ export async function getAllUsersCount(): Promise<number> {
 
 // Get count of all instructors
 export async function getAllInstructorsCount(): Promise<number> {
+  if (!(await isAdmin())) {
+    return 0;
+  }
+
   const supabase = await createClient();
-  
+
   const { count, error } = await supabase
     .from('user_profiles')
     .select('*', { count: 'exact', head: true })
@@ -52,73 +64,118 @@ export async function getAllInstructorsCount(): Promise<number> {
 }
 
 // Get all categories with translations
-export const getAllCategories = cache(async () => {
-  const supabase = await createClient();
+export const getAllCategories = cache(
+  async (): Promise<
+    Array<{
+      id: number;
+      slug: string;
+      name_ar: string;
+      name_en: string;
+      created_at: string;
+    }>
+  > => {
+    if (!(await isAdmin())) {
+      return [];
+    }
 
-  const { data, error } = await supabase
-    .from('lookup_categories')
-    .select(`
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('lookup_categories')
+      .select(
+        `
       *,
       lookup_category_translations (
         language_id,
         name
       )
-    `)
-    .order('id');
+    `
+      )
+      .order('id');
 
-  if (error) {
-    console.error('Error fetching categories:', error);
-    return [];
+    if (error || !data) {
+      console.error('Error fetching categories:', error);
+      return [];
+    }
+
+    return (data as any[]).map((cat: any) => {
+      const arTrans = cat.lookup_category_translations?.find(
+        (t: any) => t.language_id === 1
+      );
+      const enTrans = cat.lookup_category_translations?.find(
+        (t: any) => t.language_id === 2
+      );
+      return {
+        id: cat.id,
+        slug: cat.slug,
+        name_ar: arTrans?.name || '',
+        name_en: enTrans?.name || '',
+        created_at: cat.created_at,
+      };
+    });
   }
-
-  return (data || []).map((cat: any) => {
-    const arTrans = cat.lookup_category_translations?.find((t: any) => t.language_id === 1);
-    const enTrans = cat.lookup_category_translations?.find((t: any) => t.language_id === 2);
-    return {
-      id: cat.id,
-      slug: cat.slug,
-      name_ar: arTrans?.name || '',
-      name_en: enTrans?.name || '',
-      created_at: cat.created_at,
-    };
-  });
-});
+);
 
 // Get category by ID
-export const getCategoryById = cache(async (categoryId: number) => {
-  const supabase = await createClient();
+export const getCategoryById = cache(
+  async (
+    categoryId: number
+  ): Promise<{
+    id: number;
+    slug: string;
+    name_ar: string;
+    name_en: string;
+    created_at: string;
+  } | null> => {
+    if (!(await isAdmin())) {
+      return null;
+    }
 
-  const { data, error } = await supabase
-    .from('lookup_categories')
-    .select(`
+    const supabase = await createClient();
+
+    const { data, error } = await supabase
+      .from('lookup_categories')
+      .select(
+        `
       *,
       lookup_category_translations (
         language_id,
         name
       )
-    `)
-    .eq('id', categoryId)
-    .single();
+    `
+      )
+      .eq('id', categoryId)
+      .single();
 
-  if (error || !data) {
-    console.error('Error fetching category:', error);
-    return null;
+    if (error || !data) {
+      console.error('Error fetching category:', error);
+      return null;
+    }
+
+    const category = data as any;
+    const arTrans = category.lookup_category_translations?.find(
+      (t: any) => t.language_id === 1
+    );
+    const enTrans = category.lookup_category_translations?.find(
+      (t: any) => t.language_id === 2
+    );
+
+    return {
+      id: category.id,
+      slug: category.slug,
+      name_ar: arTrans?.name || '',
+      name_en: enTrans?.name || '',
+      created_at: category.created_at,
+    };
   }
-
-  const arTrans = data.lookup_category_translations?.find((t: any) => t.language_id === 1);
-  const enTrans = data.lookup_category_translations?.find((t: any) => t.language_id === 2);
-
-  return {
-    id: data.id,
-    slug: data.slug,
-    name_ar: arTrans?.name || '',
-    name_en: enTrans?.name || '',
-    created_at: data.created_at,
-  };
-});
+);
 
 // Get all levels
 export const getAllLevels = cache(async () => {
+  if (!(await isAdmin())) {
+    return [];
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -136,6 +193,10 @@ export const getAllLevels = cache(async () => {
 
 // Get level by ID
 export const getLevelById = cache(async (levelId: number) => {
+  if (!(await isAdmin())) {
+    return null;
+  }
+
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -154,10 +215,15 @@ export const getLevelById = cache(async (levelId: number) => {
 
 // Get all users with roles
 export const getAllUsersWithRoles = cache(async () => {
+  if (!(await isAdmin())) {
+    return [];
+  }
+
   const supabase = await createClient();
 
   // Get users from auth.users and their profiles
-  const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+  const { data: authUsers, error: authError } =
+    await supabase.auth.admin.listUsers();
 
   if (authError) {
     console.error('Error fetching users:', authError);
@@ -193,11 +259,16 @@ export const getAllUsersWithRoles = cache(async () => {
 
 // Get all instructors
 export const getAllInstructors = cache(async () => {
+  if (!(await isAdmin())) {
+    return [];
+  }
+
   const supabase = await createClient();
 
   const { data: profiles, error } = await supabase
     .from('user_profiles')
-    .select(`
+    .select(
+      `
       id,
       full_name,
       avatar_url,
@@ -205,7 +276,8 @@ export const getAllInstructors = cache(async () => {
       bio,
       instructor_verified,
       created_at
-    `)
+    `
+    )
     .eq('is_instructor', true)
     .order('created_at', { ascending: false });
 
@@ -219,6 +291,10 @@ export const getAllInstructors = cache(async () => {
 
 // Get instructor details with courses
 export const getInstructorDetails = cache(async (instructorId: string) => {
+  if (!(await isAdmin())) {
+    return null;
+  }
+
   const supabase = await createClient();
 
   // Get instructor profile
@@ -237,7 +313,8 @@ export const getInstructorDetails = cache(async (instructorId: string) => {
   // Get instructor's courses
   const { data: courses, error: coursesError } = await supabase
     .from('courses')
-    .select(`
+    .select(
+      `
       *,
       course_translations (
         language_id,
@@ -245,7 +322,8 @@ export const getInstructorDetails = cache(async (instructorId: string) => {
         subtitle,
         description
       )
-    `)
+    `
+    )
     .eq('instructor_id', instructorId)
     .order('created_at', { ascending: false });
 
@@ -256,8 +334,12 @@ export const getInstructorDetails = cache(async (instructorId: string) => {
   return {
     profile,
     courses: (courses || []).map((course: any) => {
-      const arTrans = course.course_translations?.find((t: any) => t.language_id === 1);
-      const enTrans = course.course_translations?.find((t: any) => t.language_id === 2);
+      const arTrans = course.course_translations?.find(
+        (t: any) => t.language_id === 1
+      );
+      const enTrans = course.course_translations?.find(
+        (t: any) => t.language_id === 2
+      );
       return {
         ...course,
         title_ar: arTrans?.title || '',
@@ -270,5 +352,3 @@ export const getInstructorDetails = cache(async (instructorId: string) => {
     }),
   };
 });
-
-

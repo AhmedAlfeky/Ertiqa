@@ -75,6 +75,7 @@ export async function middleware(request: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession();
   const user = session?.user;
+  console.log('session', user);
   console.log('user', user);
   const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, '') || '/';
   const isPublic = isPublicRoute(pathname);
@@ -94,7 +95,17 @@ export async function middleware(request: NextRequest) {
     const redirectPath =
       ROLE_REDIRECTS[roleId] || ROLE_REDIRECTS[ROLE_IDS.STUDENT];
 
-    console.log('🎯 Redirecting', user.email, 'to:', redirectPath);
+    // Prevent redirect loop: if redirect path is the same as current path, don't redirect
+    if (redirectPath === pathWithoutLocale) {
+      return response;
+    }
+
+    // If role is GUEST and user is on homepage, allow them to stay (homepage is public)
+    if (roleId === ROLE_IDS.GUEST && isHomepage) {
+      return response;
+    }
+
+    console.log('🎯 Redirecting', user.email, 'role_id:', roleId, 'to:', redirectPath);
 
     const url = new URL(`/${locale}${redirectPath}`, origin);
     return NextResponse.redirect(url);
@@ -104,6 +115,19 @@ export async function middleware(request: NextRequest) {
     const url = new URL(`/${locale}/login`, origin);
     url.searchParams.set('redirectTo', pathname);
     return NextResponse.redirect(url);
+  }
+
+  // Redirect admins away from instructor space to the admin dashboard
+  if (user) {
+    const roleId =
+      user.user_metadata?.role_id ||
+      user.app_metadata?.role_id ||
+      ROLE_IDS.STUDENT;
+
+    if (roleId === ROLE_IDS.ADMIN && pathWithoutLocale.startsWith('/instructor')) {
+      const url = new URL(`/${locale}${ROLE_REDIRECTS[ROLE_IDS.ADMIN]}`, origin);
+      return NextResponse.redirect(url);
+    }
   }
 
   return response;

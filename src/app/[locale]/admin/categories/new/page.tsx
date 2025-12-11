@@ -11,14 +11,14 @@ export default async function NewCategoryPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  const t = await getTranslations('admin');
+  const t = await getTranslations({ locale, namespace: 'admin' });
 
   if (!(await isAdmin())) {
     redirect(`/${locale}/login`);
   }
 
   return (
-    <div className="container py-8 space-y-6">
+    <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">{t('newCategory') || 'New Category'}</h1>
         <p className="text-muted-foreground mt-1">

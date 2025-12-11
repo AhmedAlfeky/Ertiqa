@@ -2,16 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
-
-interface UpdateProfileData {
-  full_name: string;
-  bio?: string;
-  phone?: string;
-  specialization?: string;
-  linkedin_url?: string;
-  twitter_url?: string;
-  website_url?: string;
-}
+import type { UpdateProfileInput } from './schemas';
 
 interface ActionResult {
   success: boolean;
@@ -20,25 +11,39 @@ interface ActionResult {
 
 export async function updateProfile(
   userId: string,
-  data: UpdateProfileData,
+  data: UpdateProfileInput,
   locale: string = 'ar'
 ): Promise<ActionResult> {
   try {
     const supabase = await createClient();
 
+    // Prepare profile update data
+    const profileUpdate: any = {
+      full_name: data.full_name,
+      bio: data.bio || null,
+      phone: data.phone || null,
+      specialization: data.specialization || null,
+      avatar_url: data.avatar_url || null,
+      linkedin_url: data.linkedin_url || null,
+      twitter_url: data.twitter_url || null,
+      website_url: data.website_url || null,
+      facebook_url: data.facebook_url || null,
+      instagram_url: data.instagram_url || null,
+      youtube_url: data.youtube_url || null,
+      updated_at: new Date().toISOString(),
+    };
+
+    // Remove empty strings and convert to null
+    Object.keys(profileUpdate).forEach(key => {
+      if (profileUpdate[key] === '') {
+        profileUpdate[key] = null;
+      }
+    });
+
     // Update user_profiles
     const { error: profileError } = await supabase
       .from('user_profiles')
-      .update({
-        full_name: data.full_name,
-        bio: data.bio || '',
-        phone: data.phone || '',
-        specialization: data.specialization || '',
-        linkedin_url: data.linkedin_url || null,
-        twitter_url: data.twitter_url || null,
-        website_url: data.website_url || null,
-        updated_at: new Date().toISOString(),
-      })
+      .update(profileUpdate)
       .eq('id', userId);
 
     if (profileError) {
@@ -50,13 +55,23 @@ export async function updateProfile(
     }
 
     // Also update auth metadata for consistency
+    const metadataUpdate: any = {
+      full_name: data.full_name,
+      bio: data.bio || null,
+      phone: data.phone || null,
+      specialization: data.specialization || null,
+      avatar_url: data.avatar_url || null,
+    };
+
+    // Remove empty strings
+    Object.keys(metadataUpdate).forEach(key => {
+      if (metadataUpdate[key] === '') {
+        metadataUpdate[key] = null;
+      }
+    });
+
     const { error: metadataError } = await supabase.auth.updateUser({
-      data: {
-        full_name: data.full_name,
-        bio: data.bio,
-        phone: data.phone,
-        specialization: data.specialization,
-      },
+      data: metadataUpdate,
     });
 
     if (metadataError) {

@@ -144,5 +144,161 @@
     "createFailed": "Failed to create",
     "minTwoOptions": "Please add at least 2 answer options",
     "selectCorrectAnswer": "Please select the correct answer"
+  },
+  "Navbar": {
+    "home": "Home",
+    "about": "About",
+    "courses": "Courses",
+    "instructors": "Instructors",
+    "blog": "Blog",
+    "login": "Login",
+    "signup": "Sign up"
+  },
+  "landing": {
+    "hero": {
+      "tagline": "50 Days Free Trial",
+      "titleLine1": "Build Your Skills",
+      "titleLine2": "on the",
+      "titleHighlight": "Best",
+      "titleLine3": "Platform",
+      "description": "Find Unlimited Courses That Match Your Niche to Hasten the Process of Developing Your Skills.",
+      "ctaPrimary": "Get Started",
+      "ctaSecondary": "Video Play",
+      "certified": "Certificate",
+      "getRecognized": "Professional",
+      "statsExperience": "Experience Mentors",
+      "statsQuality": "Quality Courses",
+      "statsStudentsLabel": "Active Students",
+      "studentsCount": "10K+ Students",
+      "joinedUs": "Joined us",
+      "coursesCount": "100+ Courses",
+      "statsStudents": "50K+",
+      "statsRating": "4.8/5",
+      "students": "Students",
+      "rating": "Rating"
+    },
+    "whyChooseUs": {
+      "title": "Why choose us?",
+      "subtitle": "Light, modern experience with Arabic and English content.",
+      "features": {
+        "certifiedTrainers": {
+          "title": "Certified trainers",
+          "description": "Hands-on experience and verified certificates."
+        },
+        "freshContent": {
+          "title": "Fresh content",
+          "description": "Continuously updated courses and curricula."
+        },
+        "accreditedCertificates": {
+          "title": "Accredited certificates",
+          "description": "Official proof of your skills after completion."
+        }
+      },
+      "badges": {
+        "expertVerified": "Expert Verified",
+        "weeklyUpdates": "Weekly Updates",
+        "intlRecognized": "Internationally Recognized"
+      },
+      "explore": "Explore"
+    },
+    "featuredCourses": {
+      "title": "Featured Courses",
+      "subtitle": "Start with the most popular courses.",
+      "viewAll": "View all"
+    },
+    "instructors": {
+      "title": "Our Trainers",
+      "subtitle": "Meet the expertise behind our courses.",
+      "viewAll": "View all"
+    },
+    "testimonials": {
+      "title": "What learners say",
+      "subtitle": "Success stories from our community."
+    },
+    "cta": {
+      "title": "Ready to start?",
+      "description": "Join thousands of learners growing with Ertiqa.",
+      "signup": "Sign up now",
+      "browse": "Browse courses",
+      "badge": "Limited Time Offer"
+    },
+    "courseCategories": {
+      "subtitle": "CATEGORIES",
+      "title": "Find Courses That Fit Your Passion",
+      "btn": "View All Categories",
+      "categories": {
+        "design": "Design & Creativity",
+        "tech": "Tech & Programming",
+        "business": "Business & Marketing",
+        "photo": "Photography & Visual Arts",
+        "personal": "Personal Development",
+        "language": "Languages",
+        "health": "Health & Fitness",
+        "music": "Music & Audio"
+      }
+    }
+  },
+  "admin": {
+    "dashboard": "Dashboard",
+    "users": "Users",
+    "instructors": "Instructors",
+    "categories": "Categories",
+    "levels": "Levels",
+    "settings": "Settings",
+    "adminPortal": "Admin Portal",
+    "navigation": "Navigation",
+    "logout": "Logout",
+    "loading": "Loading...",
+    "filter": "Filter",
+    "search": "Search...",
+    "noResults": "No results found.",
+    "id": "ID",
+    "slug": "Slug",
+    "name": "Name",
+    "nameEnglish": "Name (English)",
+    "nameArabic": "Name (Arabic)",
+    "user": "User",
+    "role": "Role",
+    "status": "Status",
+    "joined": "Joined",
+    "student": "Student",
+    "instructor": "Instructor",
+    "admin": "Admin",
+    "verified": "Verified",
+    "pending": "Pending",
+    "noName": "No name",
+    "viewDetails": "View Details",
+    "addCategory": "Add Category",
+    "addLevel": "Add Level",
+    "searchCategories": "Search categories...",
+    "searchLevels": "Search levels...",
+    "searchInstructors": "Search instructors...",
+    "searchUsersByEmail": "Search users by email...",
+    "deleteCategory": "Delete Category",
+    "deleteLevel": "Delete Level",
+    "deleteCategoryDescription": "Are you sure you want to delete this category? This action cannot be undone.",
+    "deleteLevelDescription": "Are you sure you want to delete this level? This action cannot be undone.",
+    "categoryDeleted": "Category deleted successfully",
+    "categoryDeleteFailed": "Failed to delete category",
+    "levelDeleted": "Level deleted successfully",
+    "levelDeleteFailed": "Failed to delete level",
+    "userRoleUpdated": "User role updated successfully",
+    "userRoleUpdateFailed": "Failed to update user role",
+    "errorOccurred": "An error occurred",
+    "backToInstructors": "Back to Instructors",
+    "allCourses": "All Courses",
+    "allCoursesSubtitle": "Browse and review every course in the platform",
+    "manageCategories": "Manage course categories",
+    "manageLevels": "Manage course levels",
+    "manageUsers": "Manage all users and their roles",
+    "manageInstructors": "Browse and manage instructors",
+    "newCategory": "New Category",
+    "editCategory": "Edit Category",
+    "createCategoryDescription": "Create a new course category",
+    "editCategoryDescription": "Update category information",
+    "newLevel": "New Level",
+    "editLevel": "Edit Level",
+    "createLevelDescription": "Create a new course level",
+    "editLevelDescription": "Update level information"
   }
 }

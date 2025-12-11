@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { Toaster } from 'sonner';
 import { QueryProvider } from '@/lib/providers/query-provider';
-import { Navbar } from '../components/landing/Navbar';
+import { ThemeProvider } from '@/lib/providers/theme-provider';
 
 const poppins = Poppins({
   variable: '--font-poppins',
@@ -17,6 +17,7 @@ const poppins = Poppins({
 const cairo = Cairo({
   variable: '--font-cairo',
   subsets: ['latin'],
+  weight: ['400', '700', '500', '600', '800', '900', '200', '300'],
 });
 
 const orbitron = Orbitron({
@@ -53,25 +54,31 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body
         dir={locale === 'ar' ? 'rtl' : 'ltr'}
-        className={`overflow-x-hidden dark rtl:direction-rtl ${
+        className={`overflow-x-hidden rtl:direction-rtl ${
           locale === 'ar'
             ? `${cairo.variable} cairo`
             : `${orbitron.variable} ${poppins.variable} poppins`
         } antialiased`}
       >
-        <NextIntlClientProvider messages={messages}>
-          <QueryProvider>
-            <Navbar />
-            <>{children}</>
-            <Toaster
-              dir={locale === 'ar' ? 'rtl' : 'ltr'}
-              position="top-right"
-            />
-          </QueryProvider>
-        </NextIntlClientProvider>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem={false}
+          disableTransitionOnChange
+        >
+          <NextIntlClientProvider messages={messages}>
+            <QueryProvider>
+              <>{children}</>
+              <Toaster
+                dir={locale === 'ar' ? 'rtl' : 'ltr'}
+                position="top-right"
+              />
+            </QueryProvider>
+          </NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

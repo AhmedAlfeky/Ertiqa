@@ -9,6 +9,7 @@ import { Menu, X, Globe } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from '@/components/theme-toggle';
 import MaxWidthWrapper from '../MaxwidthWrapper';
+import Image from 'next/image';
 
 export const Navbar = () => {
   const t = useTranslations('Navbar');
@@ -78,14 +79,21 @@ export const Navbar = () => {
       <MaxWidthWrapper noPadding className=" flex items-center justify-between">
         {/* Logo */}
         <Link href={`/${locale}`} className="flex items-center gap-2">
-          <span
+            <Image
+              src="/images/logo/ارتقاء لوجو25f-07.png"
+              alt="مساحة ارتقاء"
+              width={100}
+              height={100}
+              className="block object-contain"
+            />
+          {/* <span
             className={cn(
               'text-2xl font-bold transition-colors',
               isScrolled ? 'text-gold-primary' : 'text-gold-primary'
             )}
           >
-            إرتقاء
-          </span>
+          ارتقـــاء
+          </span> */}
         </Link>
 
         {/* Desktop Links */}
@@ -95,7 +103,7 @@ export const Navbar = () => {
               key={idx}
               href={link.href}
               className={cn(
-                'transition-colors font-medium text-sm',
+                'transition-colors font-bold text-sm',
                 getLinkClasses()
               )}
             >

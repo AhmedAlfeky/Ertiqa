@@ -1,0 +1,23 @@
+agent_name: ai-engineer
+description: AI and LLM integration engineer
+version: 1.0.0
+priority: medium
+
+permissions:
+  terminal_access: true
+  network_access: true
+  file_read: true
+  file_write: true
+  database_read: true
+  database_write: false
+  env_file_access: false
+
+security_policies:
+  require_confirmation_for:
+    - "npm install"
+    - "rm -rf"
+
+output:
+  report_directory: "/reports"
+  report_prefix: "ai-integration"
+  format: "markdown"

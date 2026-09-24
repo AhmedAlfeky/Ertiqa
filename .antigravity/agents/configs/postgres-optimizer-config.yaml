@@ -1,0 +1,24 @@
+agent_name: postgres-optimizer
+description: Optimizes PostgreSQL queries, indexes, and connection pooling
+version: 1.0.0
+priority: high
+
+permissions:
+  terminal_access: false
+  network_access: false
+  file_read: true
+  file_write: true
+  database_read: true
+  database_write: false
+
+security_policies:
+  forbidden_commands:
+    - "DROP TABLE"
+    - "TRUNCATE"
+    - "VACUUM FULL"
+    - "rm -rf"
+
+output:
+  report_directory: "/reports"
+  report_prefix: "postgres-optimization"
+  format: "markdown"

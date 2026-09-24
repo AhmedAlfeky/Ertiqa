@@ -1,0 +1,27 @@
+agent_name: devops-security
+description: DevOps and cloud security automation agent
+version: 1.0.0
+priority: critical
+
+permissions:
+  terminal_access: true
+  network_access: true
+  file_read: true
+  file_write: true
+  database_read: false
+  database_write: false
+  env_file_access: true
+
+security_policies:
+  require_confirmation_for:
+    - "npm install"
+    - "git push"
+    - "rm -rf"
+  forbidden_commands:
+    - "DROP DATABASE"
+    - "TRUNCATE TABLE"
+
+output:
+  report_directory: "/reports"
+  report_prefix: "devops-audit"
+  format: "markdown"

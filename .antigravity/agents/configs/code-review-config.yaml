@@ -1,0 +1,33 @@
+agent_name: code-review
+description: General code quality reviewer for Next.js and TypeScript
+version: 1.0.0
+priority: high
+
+permissions:
+  terminal_access: true
+  network_access: false
+  file_read: true
+  file_write: true
+  database_read: false
+  database_write: false
+  env_file_access: false
+
+security_policies:
+  max_files_per_scan: 100
+  forbidden_commands:
+    - "DROP"
+    - "TRUNCATE"
+    - "DELETE FROM"
+
+code_standards:
+  typescript:
+    strict_mode: true
+    no_implicit_any: true
+  nextjs:
+    prefer_server_components: true
+    app_router_only: true
+
+output:
+  report_directory: "/reports"
+  report_prefix: "code-review"
+  format: "markdown"

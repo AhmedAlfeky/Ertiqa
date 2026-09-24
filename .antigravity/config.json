@@ -1,0 +1,30 @@
+{
+    "project": {
+        "name": "Ertiqa Platform",
+        "version": "2.0.0",
+        "language": "ar"
+    },
+    "agents": {
+        "auto_load_skills": true,
+        "skills_directory": ".antigravity/agents",
+        "configs_directory": ".antigravity/agents/configs",
+        "default_model": "gemini-3.1-flash",
+        "fallback_model": "gemini-2.0-flash",
+        "capacity_retry": {
+            "enabled": true,
+            "max_retries": 3,
+            "delay_seconds": 15
+        }
+    },
+    "security": {
+        "block_database_write": false,
+        "block_env_access": true,
+        "require_confirmation_for": [
+            "npm install",
+            "git push",
+            "git reset --hard",
+            "DROP DATABASE",
+            "TRUNCATE TABLE"
+        ]
+    }
+}

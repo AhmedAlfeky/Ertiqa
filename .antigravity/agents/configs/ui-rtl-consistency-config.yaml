@@ -1,0 +1,40 @@
+agent_name: ui-rtl-consistency
+description: Ensures RTL, Arabic fonts, and UI preferences are consistent across Ertiqa platform
+version: 1.0.0
+priority: high
+
+permissions:
+  terminal_access: false[cite: 18]
+  network_access: false[cite: 18]
+  file_read: true[cite: 18]
+  file_write: true[cite: 18]
+  database_read: false[cite: 18]
+  database_write: false[cite: 18]
+  env_file_access: false
+
+environment:
+  required_files:
+    - tailwind.config.ts[cite: 18]
+    - app/layout.tsx[cite: 18]
+    - project-structure.yaml[cite: 18]
+  watched_extensions:
+    - ".tsx"[cite: 18]
+    - ".css"[cite: 18]
+    - ".scss"[cite: 18]
+
+code_standards:
+  tailwind:
+    mobile_first: true
+    prefer_logical_properties: true
+  typography:
+    default_font: "font-cairo"
+    decorative_fonts:
+      - "font-amiri"
+      - "font-diwani"
+
+output:
+  report_directory: "/reports"
+  report_prefix: "ui-rtl-audit"
+  format: "markdown"
+  include_line_numbers: true
+  include_code_snippets: true

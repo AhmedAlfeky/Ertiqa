@@ -1,0 +1,18 @@
+agent_name: tester-qc
+description: Quality assurance and automated testing agent
+version: 1.0.0
+priority: high
+
+permissions:
+  terminal_access: true
+  network_access: false
+  file_read: true
+  file_write: true
+  database_read: false
+  database_write: false
+  env_file_access: false
+
+output:
+  report_directory: "/reports"
+  report_prefix: "qc-test-report"
+  format: "markdown"

@@ -1,0 +1,18 @@
+agent_name: system-analyst
+description: System and database analyst for schema and API contracts
+version: 1.0.0
+priority: high
+
+permissions:
+  terminal_access: false
+  network_access: false
+  file_read: true
+  file_write: true
+  database_read: true
+  database_write: false
+  env_file_access: false
+
+output:
+  report_directory: "/reports"
+  report_prefix: "system-analysis"
+  format: "markdown"

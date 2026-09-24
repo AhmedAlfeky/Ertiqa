@@ -1,0 +1,170 @@
+project_structure:
+  public:
+    - file.svg
+    - globe.svg
+    - next.svg
+    - placeholder-avatar.png
+    - vercel.svg
+    - window.svg
+  fonts:
+    - ae_AlMateen.ttf
+    - ae_AlMohanad.ttf
+    - ae_AlMothnna_bold.ttf
+    - Arslan.ttf
+    - GE SS TV Bold.ttf
+    - GE SS Tow Bold.ttf
+  images:
+    - arw.png
+    - cart-emp.png
+    - eezy.png
+    - eezy1.png
+    - Ertiqa1.jpg
+    - favicon.ico
+    - LandingErtiqa.jpg
+    - LandingErtiqa.png
+    - placeholder-avatar.png
+  icons:
+    - email.png
+    - facebook.png
+    - instgram.png
+    - linkedin.png
+    - snapchat.png
+    - twitter.png
+    - whatsapp.png
+    - youtube.png
+  logo:
+    - logo.png
+    - "ارتقاء لوجو25f-07.jpg"
+    - "ارتقاء لوجو25f-07.png"
+  temp:
+    - vecteezy_abstract-colorful-geometric-background-3d-effect-trendy-colors_.jpg
+    - vecteezy_abstract-voronoi-cell-3d-geometric-background-minimal-polygonal-shapes_.jpg
+    - vecteezy_ai-generated-a-silhouette-of-a-person-standing-on-top-of-a_40247032.jpg
+    - vecteezy_modern-phone-business-smartphone-technology-and-modern_6684101.jpg
+    - vecteezy_silhouette-man-jumping-from-lose-to-win-with-sunrise_8749783.jpg
+  reports:
+    - postgres-optimization-20260331.md
+    - structural-audit-20260331.md
+  scripts:
+    - seed-categories-courses.ts
+    - seed-instructors.ts
+    - seed.ts
+  src:
+    - fonts.ts
+    - middleware.ts
+  actions:
+    auth:
+      - actions.ts
+      - index.ts
+      - schemas.ts
+  app:
+    favicon.ico: {}
+    globals.css: {}
+    admin:
+      "./layout.tsx": {}
+      dashboard:
+        pages.tsx: {}
+      (public):
+        auth:
+          login:
+          register:
+        blog:
+          [slug]:
+        books:
+          [slug]:
+        contact:
+        courses:
+          [slug]:
+        events:
+          [slug]:
+        help:
+        podcast:
+          [slug]:
+      "[lang]":
+        test-db:
+      "[locale]":
+        layout.tsx: {}
+        not-found.tsx: {}
+      (auth):
+        layout.tsx: {}
+      forgot-password:
+        page.tsx: {}
+      login:
+        page.tsx: {}
+      reset-password:
+        page.tsx: {}
+      signup:
+        page.tsx: {}
+      layout.tsx: {}
+      page.tsx: {}
+      courses:
+        page.tsx: {}
+      "[slug]":
+        page.tsx: {}
+        instructors:
+          page.tsx: {}
+        "[instructorID]":
+          page.tsx: {}
+        admin:
+          layout.tsx: {}
+          categories:
+            page.tsx: {}
+            "[categoryId]":
+            new:
+          courses:
+            page.tsx: {}
+          dashboard:
+            page.tsx: {}
+          instructors:
+            page.tsx: {}
+            "[instructorId]":
+              page.tsx: {}
+          levels:
+            page.tsx: {}
+            "[levelId]":
+              page.tsx: {}
+            new:
+              page.tsx: {}
+          settings:
+            page.tsx: {}
+          users:
+            page.tsx: {}
+        auth:
+          callback:
+            route.ts: {}
+        instructor:
+          layout.tsx: {}
+          courses:
+            courseCard.tsx: {}
+            page.tsx: {}
+            "[coursId]":
+              manage:
+                page.tsx: {}
+                quiz:
+                  "[quizId]":
+                    page.tsx: {}
+                  create:
+                    page.tsx: {}
+                units:
+                  page.tsx: {}
+            create:
+              page.tsx: {}
+          dashboard:
+            page.tsx: {}
+          settings:
+            page.tsx: {}
+        student:
+          layout.tsx: {}
+          dashboard:
+            page.tsx: {}
+          settings:
+            page.tsx: {}
+        "***************************************************************": {}
+      api: {}
+      components: {}
+      styles: {}
+      test-db: {}
+
+    
+
+    

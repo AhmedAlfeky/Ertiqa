@@ -1,0 +1,35 @@
+agent_name: coding
+description: Professional implementation agent for Next.js + TypeScript with Postgres & Oracle integration
+version: 1.0.0
+priority: critical
+
+permissions:
+  terminal_access: true
+  file_read: true
+  file_write: true
+  network_access: true
+  database_read: true
+  database_write: true
+  env_file_access: false
+
+security_policies:
+  max_files_per_scan: 200
+  timeout_seconds: 900
+  require_confirmation_for:
+    - "npm install"
+    - "npm uninstall"
+    - "rm -rf"
+    - "git push"
+    - "git reset --hard"
+  forbidden_commands:
+    - "DROP DATABASE"
+    - "TRUNCATE TABLE"
+    - "DELETE FROM .* WHERE 1=1"
+
+code_standards:
+  typescript:
+    strict_mode: true
+    no_implicit_any: true
+  nextjs:
+    app_router_only: true
+    prefer_server_components: true

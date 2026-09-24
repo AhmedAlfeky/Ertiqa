@@ -1,0 +1,18 @@
+agent_name: business-analyst
+description: Expert business analyst for project scoping and user stories
+version: 1.0.0
+priority: medium
+
+permissions:
+  terminal_access: false
+  network_access: false
+  file_read: true
+  file_write: true
+  database_read: false
+  database_write: false
+  env_file_access: false
+
+output:
+  report_directory: "/reports"
+  report_prefix: "business-analysis"
+  format: "markdown"

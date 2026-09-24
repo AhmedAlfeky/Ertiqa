@@ -1,0 +1,153 @@
+{
+  "version": "2.0.0",
+  "auto_activate": true,
+  "skills": [
+    {
+      "name": "coding",
+      "path": "./.antigravity/agents/coding-agent.md",
+      "role": "implementation",
+      "auto_activate": true,
+      "priority": "critical"
+    },
+    {
+      "name": "code-review",
+      "path": "./.antigravity/agents/code-review-agent.md",
+      "role": "review",
+      "auto_activate": true,
+      "priority": "high"
+    },
+    {
+      "name": "postgres-audit",
+      "path": "./.antigravity/agents/postgres-audit-agent.md",
+      "role": "testing",
+      "auto_activate": true,
+      "priority": "critical"
+    },
+    {
+      "name": "postgres-optimizer",
+      "path": "./.antigravity/agents/postgres-optimizer-agent.md",
+      "role": "optimization",
+      "auto_activate": true,
+      "priority": "medium"
+    },
+    {
+      "name": "ui-rtl-consistency",
+      "path": "./.antigravity/agents/ui-rtl-consistency-agent.md",
+      "role": "ui-check",
+      "auto_activate": true,
+      "priority": "high"
+    },
+    {
+      "name": "business-analyst",
+      "path": "./.antigravity/agents/business-analyst-agent.md",
+      "role": "analysis",
+      "auto_activate": false,
+      "priority": "medium"
+    },
+    {
+      "name": "system-architect",
+      "path": "./.antigravity/agents/system-architect-agent.md",
+      "role": "architecture",
+      "auto_activate": false,
+      "priority": "high"
+    },
+    {
+      "name": "system-analyst",
+      "path": "./.antigravity/agents/system-analyst-agent.md",
+      "role": "design",
+      "auto_activate": false,
+      "priority": "high"
+    },
+    {
+      "name": "ai-engineer",
+      "path": "./.antigravity/agents/ai-engineer-agent.md",
+      "role": "ai-integration",
+      "auto_activate": false,
+      "priority": "medium"
+    },
+    {
+      "name": "tester-qc",
+      "path": "./.antigravity/agents/tester-qc-agent.md",
+      "role": "quality-control",
+      "auto_activate": true,
+      "priority": "high"
+    },
+    {
+      "name": "devops-security",
+      "path": "./.antigravity/agents/devops-security-agent.md",
+      "role": "devops",
+      "auto_activate": true,
+      "priority": "critical"
+    }
+  ],
+  "agents": [
+    {
+      "name": "CodingAgent",
+      "skill": "coding",
+      "role": "implementation",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "CodeReviewAgent",
+      "skill": "code-review",
+      "role": "review",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "TestingAgent",
+      "skill": "postgres-audit",
+      "role": "testing",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "OptimizerAgent",
+      "skill": "postgres-optimizer",
+      "role": "optimization",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "UIConsistencyAgent",
+      "skill": "ui-rtl-consistency",
+      "role": "ui-check",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "BusinessAnalystAgent",
+      "skill": "business-analyst",
+      "role": "analysis",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "SystemArchitectAgent",
+      "skill": "system-architect",
+      "role": "architecture",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "SystemAnalystAgent",
+      "skill": "system-analyst",
+      "role": "design",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "AIEngineerAgent",
+      "skill": "ai-engineer",
+      "role": "ai-integration",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "TesterQCAgent",
+      "skill": "tester-qc",
+      "role": "quality-control",
+      "project_map": "project-structure.yaml"
+    },
+    {
+      "name": "DevOpsSecurityAgent",
+      "skill": "devops-security",
+      "role": "devops",
+      "project_map": "project-structure.yaml"
+    }
+  ],
+  "default_model": "gemini-3.1-flash",
+  "fallback_model": "gemini-2.0-flash"
+}

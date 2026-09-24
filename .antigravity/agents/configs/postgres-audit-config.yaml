@@ -1,0 +1,27 @@
+agent_name: postgres-audit
+description: Security-focused PostgreSQL auditor
+version: 1.0.0
+priority: high
+
+permissions:
+  terminal_access: false
+  network_access: false
+  file_read: true
+  file_write: true
+  database_read: false
+  database_write: false
+  env_file_access: false
+
+security_policies:
+  max_files_per_scan: 50
+  timeout_seconds: 300
+  require_confirmation_for:
+    - "DROP TABLE"
+    - "TRUNCATE"
+    - "DELETE FROM"
+    - "ALTER TABLE"
+
+output:
+  report_directory: "/reports"
+  report_prefix: "postgres-security-audit"
+  format: "markdown"

@@ -35,13 +35,13 @@ BEGIN
   -- Get the role from metadata (default to STUDENT if not specified)
   v_role_id := COALESCE(
     (NEW.raw_user_meta_data->>'role_id')::INTEGER,
-    (SELECT ID FROM public.SEC_ROLES WHERE NAME = 'STUDENT' LIMIT 1)
+    (SELECT role_id FROM public.SEC_ROLES WHERE role_name = 'STUDENT' LIMIT 1)
   );
 
   -- Assign role to user
   INSERT INTO public.SEC_USER_ROLES (USER_ID, ROLE_ID, ASSIGNED_AT)
   SELECT 
-    (SELECT ID FROM public.SEC_USERS WHERE EMAIL = NEW.email),
+    (SELECT user_id FROM public.SEC_USERS WHERE EMAIL = NEW.email),
     v_role_id,
     NOW()
   ON CONFLICT (USER_ID, ROLE_ID) DO NOTHING;
@@ -53,20 +53,20 @@ BEGIN
     CREATED_AT
   )
   SELECT 
-    (SELECT ID FROM public.SEC_USERS WHERE EMAIL = NEW.email),
+    (SELECT user_id FROM public.SEC_USERS WHERE EMAIL = NEW.email),
     COALESCE(v_full_name, ''),
     NOW()
   ON CONFLICT (USER_ID) DO NOTHING;
 
   -- If role is INSTRUCTOR, create instructor record
-  IF v_role_id = (SELECT ID FROM public.SEC_ROLES WHERE NAME = 'INSTRUCTOR' LIMIT 1) THEN
+  IF v_role_id = (SELECT role_id FROM public.SEC_ROLES WHERE role_name = 'INSTRUCTOR' LIMIT 1) THEN
     INSERT INTO public.INF_INSTRUCTORS (
       USER_ID,
       VERIFIED,
       JOINED_AT
     )
     SELECT 
-      (SELECT ID FROM public.SEC_USERS WHERE EMAIL = NEW.email),
+      (SELECT user_id FROM public.SEC_USERS WHERE EMAIL = NEW.email),
       FALSE,
       NOW()
     ON CONFLICT (USER_ID) DO NOTHING;
@@ -97,11 +97,11 @@ RETURNS TABLE (
 BEGIN
   RETURN QUERY
   SELECT 
-    r.ID as role_id,
-    r.NAME as role_name
+    r.role_id,
+    r.role_name
   FROM public.SEC_USERS u
-  JOIN public.SEC_USER_ROLES ur ON u.ID = ur.USER_ID
-  JOIN public.SEC_ROLES r ON ur.ROLE_ID = r.ID
+  JOIN public.SEC_USER_ROLES ur ON u.user_id = ur.USER_ID
+  JOIN public.SEC_ROLES r ON ur.ROLE_ID = r.role_id
   WHERE u.EMAIL = user_email
   LIMIT 1;
 END;
@@ -119,10 +119,10 @@ BEGIN
   RETURN EXISTS (
     SELECT 1
     FROM public.SEC_USERS u
-    JOIN public.SEC_USER_ROLES ur ON u.ID = ur.USER_ID
-    JOIN public.SEC_ROLES r ON ur.ROLE_ID = r.ID
+    JOIN public.SEC_USER_ROLES ur ON u.user_id = ur.USER_ID
+    JOIN public.SEC_ROLES r ON ur.ROLE_ID = r.role_id
     WHERE u.EMAIL = user_email
-    AND r.NAME = role_name_param
+    AND r.role_name = role_name_param
   );
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
@@ -149,7 +149,7 @@ CREATE POLICY "Users can view own roles"
   FOR SELECT
   USING (
     USER_ID = (
-      SELECT ID FROM public.SEC_USERS 
+      SELECT user_id FROM public.SEC_USERS 
       WHERE EMAIL = auth.jwt()->>'email'
     )
   );
@@ -160,7 +160,7 @@ CREATE POLICY "Users can view own profile"
   FOR SELECT
   USING (
     USER_ID = (
-      SELECT ID FROM public.SEC_USERS 
+      SELECT user_id FROM public.SEC_USERS 
       WHERE EMAIL = auth.jwt()->>'email'
     )
   );
@@ -170,7 +170,7 @@ CREATE POLICY "Users can update own profile"
   FOR UPDATE
   USING (
     USER_ID = (
-      SELECT ID FROM public.SEC_USERS 
+      SELECT user_id FROM public.SEC_USERS 
       WHERE EMAIL = auth.jwt()->>'email'
     )
   );
@@ -181,7 +181,7 @@ CREATE POLICY "Instructors can view own data"
   FOR SELECT
   USING (
     USER_ID = (
-      SELECT ID FROM public.SEC_USERS 
+      SELECT user_id FROM public.SEC_USERS 
       WHERE EMAIL = auth.jwt()->>'email'
     )
   );

@@ -18,8 +18,10 @@ CREATE TABLE IF NOT EXISTS public.SEC_ROLES (
 INSERT INTO public.SEC_ROLES (role_id, role_name) VALUES
   (1, 'STUDENT'),
   (2, 'INSTRUCTOR'),
-  (4, 'ADMIN')
-ON CONFLICT (role_id) DO NOTHING;
+  (3, 'SUPPORT'),
+  (4, 'GUEST'),
+  (5, 'ADMIN')
+ON CONFLICT (role_id) DO UPDATE SET role_name = EXCLUDED.role_name;
 
 -- ============================================
 -- 2. USERS TABLE (Synced with auth.users)

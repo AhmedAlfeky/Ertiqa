@@ -297,11 +297,10 @@ export async function isInstructor(): Promise<boolean> {
 
   if (!user) return false;
 
-  // Check user metadata for instructor role (prioritize role_id)
-  const roleId = user.user_metadata?.role_id || user.app_metadata?.role_id;
-  const roleName = user.user_metadata?.role || user.app_metadata?.role;
-  const isInstructorFlag =
-    user.user_metadata?.is_instructor || user.app_metadata?.is_instructor;
+  // Secure: check only app_metadata (cannot be tampered with by the client)
+  const roleId = user.app_metadata?.role_id;
+  const roleName = user.app_metadata?.role;
+  const isInstructorFlag = user.app_metadata?.is_instructor;
 
   return (
     roleId === ROLE_IDS.INSTRUCTOR ||
@@ -328,11 +327,10 @@ export const getCurrentInstructorId = cache(
       return null;
     }
 
-    // Verify user is actually an instructor
-    const roleId = user.user_metadata?.role_id || user.app_metadata?.role_id;
-    const roleName = user.user_metadata?.role || user.app_metadata?.role;
-    const isInstructorFlag =
-      user.user_metadata?.is_instructor || user.app_metadata?.is_instructor;
+    // Verify user is actually an instructor using secure app_metadata
+    const roleId = user.app_metadata?.role_id;
+    const roleName = user.app_metadata?.role;
+    const isInstructorFlag = user.app_metadata?.is_instructor;
 
     const isUserInstructor =
       roleId === ROLE_IDS.INSTRUCTOR ||

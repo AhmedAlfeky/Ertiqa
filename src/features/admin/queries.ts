@@ -14,9 +14,9 @@ export async function isAdmin(): Promise<boolean> {
 
   if (!user) return false;
 
-  // Check user metadata for admin role (prioritize role_id)
-  const roleId = user.user_metadata?.role_id || user.app_metadata?.role_id;
-  const roleName = user.user_metadata?.role || user.app_metadata?.role;
+  // Check app_metadata for admin role (secure: cannot be modified by the client)
+  const roleId = user.app_metadata?.role_id;
+  const roleName = user.app_metadata?.role;
 
   return (
     roleId === ROLE_IDS.ADMIN || roleName === 'ADMIN' || roleName === 'admin'
@@ -262,9 +262,9 @@ export const getAllUsersWithRoles = cache(
       return { data: [], total: 0, page, limit, totalPages: 0 };
     }
 
-    // 2. تحقق من صلاحياته (هل هو Admin؟)
-    const roleId = user.user_metadata?.role_id || user.app_metadata?.role_id;
-    const roleName = user.user_metadata?.role || user.app_metadata?.role;
+    // 2. تحقق من صلاحياته (هل هو Admin؟) عبر app_metadata المحمي
+    const roleId = user.app_metadata?.role_id;
+    const roleName = user.app_metadata?.role;
     const isUserAdmin =
       roleId === ROLE_IDS.ADMIN || roleName === 'ADMIN' || roleName === 'admin';
 
@@ -295,8 +295,9 @@ export const getAllUsersWithRoles = cache(
     // Map users with their roles from metadata
     const allUsers = (authUsers?.users || []).map((user: any) => {
       const profile = profileMap.get(user.id);
-      const roleId = user.user_metadata?.role_id || user.app_metadata?.role_id;
-      const roleName = user.user_metadata?.role || user.app_metadata?.role;
+      // Get verified role from app_metadata
+      const roleId = user.app_metadata?.role_id;
+      const roleName = user.app_metadata?.role;
 
       return {
         id: user.id,

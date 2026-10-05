@@ -86,11 +86,8 @@ export async function middleware(request: NextRequest) {
   );
 
   const {
-    data: { session },
-  } = await supabase.auth.getSession();
-  const user = session?.user;
-  console.log('session', user);
-  console.log('user', user);
+    data: { user },
+  } = await supabase.auth.getUser();
   const pathWithoutLocale = pathname.replace(/^\/[a-z]{2}/, '') || '/';
   const isPublic = isPublicRoute(pathname);
   const isAuthRoute =

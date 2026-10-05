@@ -17,6 +17,27 @@ export async function updateProfile(
   try {
     const supabase = await createClient();
 
+    // 1. Get authenticated user from session to prevent IDOR
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      return {
+        success: false,
+        error: 'Unauthorized',
+      };
+    }
+
+    // 2. Validate userId matches authenticated session
+    if (userId && userId !== user.id) {
+      return {
+        success: false,
+        error: 'Unauthorized - You cannot update another user profile',
+      };
+    }
+
     // Prepare profile update data
     const profileUpdate: any = {
       full_name: data.full_name,
@@ -40,11 +61,11 @@ export async function updateProfile(
       }
     });
 
-    // Update user_profiles
+    // 3. Update user_profiles using authenticated user's ID exclusively
     const { error: profileError } = await supabase
       .from('user_profiles')
       .update(profileUpdate)
-      .eq('id', userId);
+      .eq('id', user.id);
 
     if (profileError) {
       console.error('Error updating profile:', profileError);

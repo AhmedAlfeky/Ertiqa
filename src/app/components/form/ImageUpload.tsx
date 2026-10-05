@@ -2,10 +2,19 @@
 
 import React, { useState, useCallback, useRef } from "react";
 import { Upload, X, Loader2, Image as ImageIcon } from "lucide-react";
-import { Button } from "@/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { uploadImage, type ImageUploadResult } from "@/lib/utils/imagekit";
+import { uploadImage } from "@/lib/utils/imagekit";
 import { toast } from "sonner";
+
+interface UploadResult {
+  url: string;
+  fileId: string;
+}
+
+const uploadImage = async (_file: File, _folder: string): Promise<UploadResult> => {
+  throw new Error("Image upload is not configured. Please add the image upload implementation.");
+};
 
 interface ImageUploadProps {
   value?: string[];

@@ -71,7 +71,7 @@ export const ROLE_ROUTE_GUARDS: Record<string, number[]> = {
 // =============================================================================
 // LOCALE CONFIGURATION
 // =============================================================================
-export const SUPPORTED_LOCALES = ['ar', 'en', 'fr'] as const;
+export const SUPPORTED_LOCALES = ['ar', 'en'] as const;
 export const DEFAULT_LOCALE = 'ar';
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];

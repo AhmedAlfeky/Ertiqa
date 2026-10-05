@@ -6,6 +6,7 @@ import {
   PUBLIC_ROUTES,
   ROLE_REDIRECTS,
   ROLE_IDS,
+  ROLE_ROUTE_GUARDS,
 } from '@/lib/constants';
 
 function getLocaleFromPathname(pathname: string): string | null {
@@ -128,16 +129,29 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect admins away from instructor space to the admin dashboard
+  // Enforce role-based route guards
   if (user) {
     const roleId =
-      user.user_metadata?.role_id ||
       user.app_metadata?.role_id ||
+      user.user_metadata?.role_id ||
       ROLE_IDS.STUDENT;
 
-    if (roleId === ROLE_IDS.ADMIN && pathWithoutLocale.startsWith('/instructor')) {
-      const url = new URL(`/${locale}${ROLE_REDIRECTS[ROLE_IDS.ADMIN]}`, origin);
-      return NextResponse.redirect(url);
+    // Check if the current route is protected by ROLE_ROUTE_GUARDS
+    const matchingGuard = Object.entries(ROLE_ROUTE_GUARDS).find(([route]) =>
+      pathWithoutLocale.startsWith(route)
+    );
+
+    if (matchingGuard) {
+      const [, allowedRoles] = matchingGuard;
+      if (!allowedRoles.includes(roleId)) {
+        console.log(
+          `🚫 Unauthorized access to ${pathWithoutLocale} for role ${roleId}. Redirecting...`
+        );
+        const redirectPath =
+          ROLE_REDIRECTS[roleId] || ROLE_REDIRECTS[ROLE_IDS.STUDENT];
+        const url = new URL(`/${locale}${redirectPath}`, origin);
+        return NextResponse.redirect(url);
+      }
     }
   }
 

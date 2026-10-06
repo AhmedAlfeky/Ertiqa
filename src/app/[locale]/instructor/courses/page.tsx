@@ -35,7 +35,7 @@ export default async function InstructorCoursesPage({
   const instructorId = await getCurrentInstructorId();
 
   if (!instructorId) {
-    redirect(`/${locale}/auth/login`);
+    redirect(`/${locale}/login`);
   }
 
   const page = parseInt(resolvedSearchParams.page || '1');

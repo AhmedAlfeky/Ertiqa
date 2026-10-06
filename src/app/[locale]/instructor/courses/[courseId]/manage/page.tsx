@@ -19,7 +19,7 @@ export default async function CourseManagePage({
 
   const instructorId = await getCurrentInstructorId();
   if (!instructorId) {
-    redirect(`/${locale}/instructor/login`);
+    redirect(`/${locale}/login`);
   }
 
   const courseIdNum = parseInt(courseId);

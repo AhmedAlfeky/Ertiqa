@@ -1,20 +1,48 @@
 // src/fonts.ts
-import { Amiri, Cairo, Tajawal, Changa, Inter, Roboto } from 'next/font/google';
+import {
+  Cairo,
+  Poppins,
+  Orbitron,
+  Amiri,
+  Tajawal,
+  Changa,
+  Inter,
+  Roboto,
+} from 'next/font/google';
 import localFont from 'next/font/local';
 
-// خطوط Google Fonts (عربية ولاتينية)
+// ============================================
+// 1. الخطوط الأساسية للمنصة (Core Platform Fonts)
+// ============================================
+export const cairo = Cairo({
+  subsets: ['arabic', 'latin'],
+  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
+  display: 'swap',
+  variable: '--font-cairo',
+});
+
+export const poppins = Poppins({
+  variable: '--font-poppins',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  fallback: ['system-ui', 'arial'],
+});
+
+export const orbitron = Orbitron({
+  variable: '--font-orbitron',
+  subsets: ['latin'],
+  display: 'swap',
+});
+
+// ============================================
+// 2. خطوط المحتوى والتصميم الإضافية (Google Fonts)
+// ============================================
 export const amiri = Amiri({
   subsets: ['arabic'],
   weight: ['400', '700'],
   display: 'swap',
   variable: '--font-amiri',
-});
-
-export const cairo = Cairo({
-  subsets: ['arabic'],
-  weight: ['400', '700'],
-  display: 'swap',
-  variable: '--font-cairo',
 });
 
 export const tajawal = Tajawal({
@@ -45,7 +73,9 @@ export const roboto = Roboto({
   variable: '--font-roboto',
 });
 
-// خطوط محلية (Local Fonts)
+// ============================================
+// 3. الخطوط المحلية الخاصة (Local Fonts)
+// ============================================
 export const gesstwo = localFont({
   src: '../public/fonts/GE SS Two Bold.ttf',
   display: 'swap',
@@ -81,3 +111,23 @@ export const arslan = localFont({
   display: 'swap',
   variable: '--font-arslan',
 });
+
+// ============================================
+// 4. مجمع متغيرات كافة الخطوط للحقن في الـ Root Layout
+// ============================================
+export const fontVariables = [
+  cairo.variable,
+  poppins.variable,
+  orbitron.variable,
+  amiri.variable,
+  tajawal.variable,
+  changa.variable,
+  inter.variable,
+  roboto.variable,
+  gesstwo.variable,
+  gesstv.variable,
+  mateen.variable,
+  mohanned.variable,
+  mothanna.variable,
+  arslan.variable,
+].join(' ');

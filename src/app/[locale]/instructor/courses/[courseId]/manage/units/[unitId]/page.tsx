@@ -15,7 +15,7 @@ import {
 import { getUnitById } from '@/features/instructor/curriculum-queries';
 import { createClient } from '@/lib/supabase/server';
 import { getTranslations } from 'next-intl/server';
-import { UnitManageClient } from '@/app/components/instructor/UnitManageClient';
+import { UnitManageClient } from '@/features/instructor/components/UnitManageClient';
 
 export const dynamic = 'force-dynamic';
 

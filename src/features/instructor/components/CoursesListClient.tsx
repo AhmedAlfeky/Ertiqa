@@ -10,7 +10,7 @@ import { DataTablePagination } from '@/app/components/dashboard/DataTablePaginat
 import type {
   CourseWithDetails,
   PaginatedResult,
-} from '../../../features/instructor/types';
+} from '@/features/instructor/types';
 import Link from 'next/link';
 import Image from 'next/image';
 

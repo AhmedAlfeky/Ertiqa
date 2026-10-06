@@ -6,44 +6,44 @@ import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
 import { DataTable } from '@/app/components/dashboard/DataTable';
 import { DeleteDialog } from '@/app/components/dashboard/DeleteDialog';
-import { CategoryDialog } from './CategoryDialog';
+import { LevelDialog } from './LevelDialog';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { deleteCategory } from '../../../features/admin/actions';
+import { deleteLevel } from '@/features/admin/actions';
 import { toast } from 'sonner';
 import { useTranslations } from 'next-intl';
 
-interface Category {
+interface Level {
   id: number;
-  slug: string;
-  name_ar: string;
-  name_en: string;
+  name: string;
   created_at: string;
 }
 
-interface CategoriesTableProps {
-  categories: Category[];
+interface LevelsTableProps {
+  levels: Level[];
   locale: string;
 }
 
-export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
+export function LevelsTable({ levels, locale }: LevelsTableProps) {
   const t = useTranslations('admin');
   const router = useRouter();
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingCategory, setEditingCategory] = useState<Category | undefined>(undefined);
+  const [editingLevel, setEditingLevel] = useState<Level | undefined>(
+    undefined
+  );
 
   const handleDelete = async () => {
     if (!deleteId) return;
 
     setIsDeleting(true);
     try {
-      const result = await deleteCategory(deleteId);
+      const result = await deleteLevel(deleteId);
       if (result.success) {
-        toast.success(t('categoryDeleted'));
+        toast.success(t('levelDeleted'));
         router.refresh();
       } else {
-        toast.error(result.error || t('categoryDeleteFailed'));
+        toast.error(result.error || t('levelDeleteFailed'));
       }
     } catch (error) {
       toast.error(t('errorOccurred'));
@@ -53,35 +53,26 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
     }
   };
 
-  const columns: ColumnDef<Category>[] = [
+  const columns: ColumnDef<Level>[] = [
     {
       accessorKey: 'id',
       header: t('id'),
     },
     {
-      accessorKey: 'slug',
-      header: t('slug'),
-    },
-    {
-      accessorKey: 'name_en',
-      header: t('nameEnglish'),
-    },
-    {
-      accessorKey: 'name_ar',
-      header: t('nameArabic'),
-      cell: ({ row }) => <span dir="rtl">{row.getValue('name_ar')}</span>,
+      accessorKey: 'name',
+      header: t('name'),
     },
     {
       id: 'actions',
       cell: ({ row }) => {
-        const category = row.original;
+        const level = row.original;
         return (
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => {
-                setEditingCategory(category);
+                setEditingLevel(level);
                 setDialogOpen(true);
               }}
             >
@@ -90,7 +81,7 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setDeleteId(category.id)}
+              onClick={() => setDeleteId(level.id)}
             >
               <Trash2 className="h-4 w-4 text-destructive" />
             </Button>
@@ -105,41 +96,41 @@ export function CategoriesTable({ categories, locale }: CategoriesTableProps) {
       <div className="flex justify-end">
         <Button
           onClick={() => {
-            setEditingCategory(undefined);
+            setEditingLevel(undefined);
             setDialogOpen(true);
           }}
         >
           <Plus className="me-2 h-4 w-4" />
-          {t('addCategory')}
+          {t('addLevel')}
         </Button>
       </div>
 
       <DataTable
         columns={columns}
-        data={categories}
-        searchKey="name_en"
-        searchPlaceholder={t('searchCategories')}
+        data={levels}
+        searchKey="name"
+        searchPlaceholder={t('searchLevels')}
       />
 
       <DeleteDialog
         isOpen={!!deleteId}
         onClose={() => setDeleteId(null)}
         onConfirm={handleDelete}
-        title={t('deleteCategory')}
-        description={t('deleteCategoryDescription')}
-        itemName={categories.find(c => c.id === deleteId)?.name_en || ''}
+        title={t('deleteLevel')}
+        description={t('deleteLevelDescription')}
+        itemName={levels.find(l => l.id === deleteId)?.name || ''}
         isLoading={isDeleting}
       />
 
-      <CategoryDialog
+      <LevelDialog
         open={dialogOpen}
-        onOpenChange={(open) => {
+        onOpenChange={open => {
           setDialogOpen(open);
           if (!open) {
-            setEditingCategory(undefined);
+            setEditingLevel(undefined);
           }
         }}
-        category={editingCategory}
+        level={editingLevel}
         locale={locale}
       />
     </div>

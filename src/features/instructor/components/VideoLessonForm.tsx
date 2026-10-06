@@ -20,8 +20,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Card } from '@/components/ui/card';
 import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import FormVideoUpload from '@/app/components/form/FormVideoUpload';
-import FormInput from '@/app/components/form/FormInput';
+import FormVideoUpload from '@/components/form/FormVideoUpload';
+import FormInput from '@/components/form/FormInput';
 
 const videoLessonSchema = z.object({
   title_ar: z.string().min(3, 'Arabic title must be at least 3 characters'),

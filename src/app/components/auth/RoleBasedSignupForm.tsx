@@ -13,7 +13,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { GraduationCap, Users } from 'lucide-react';
-import FormInput from '@/app/components/form/FormInput';
+import FormInput from '@/components/form/FormInput';
 
 export default function RoleBasedSignupForm() {
   const t = useTranslations('auth');

@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { DataTable } from '@/app/components/dashboard/DataTable';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { updateUserRole } from '../../../features/admin/actions';
+import { updateUserRole } from '@/features/admin/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import {

@@ -9,7 +9,7 @@ import { resetPasswordSchema, type ResetPasswordInput } from '@/lib/validations/
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useTranslations } from 'next-intl';
-import FormInput from '@/app/components/form/FormInput';
+import FormInput from '@/components/form/FormInput';
 import AuthLayout from '@/app/components/auth/AuthLayout';
 import { createClient } from '@/lib/supabase/client';
 

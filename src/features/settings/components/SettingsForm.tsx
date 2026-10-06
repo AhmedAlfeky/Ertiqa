@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import { FormInput, FormImageUpload } from '@/app/components/form';
+import { FormInput, FormImageUpload } from '@/components/form';
 import {
   updateProfileSchema,
   type UpdateProfileInput,

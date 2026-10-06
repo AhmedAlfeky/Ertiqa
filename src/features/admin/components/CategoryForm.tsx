@@ -17,7 +17,7 @@ import { Loader2 } from 'lucide-react';
 import {
   createCategory,
   updateCategory,
-} from '../../../features/admin/actions';
+} from '@/features/admin/actions';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 

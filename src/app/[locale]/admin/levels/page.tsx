@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getAllLevels, isAdmin } from '@/features/admin/queries';
-import { LevelsTable } from '@/app/components/admin/LevelsTable';
+import { LevelsTable } from '@/features/admin/components/LevelsTable';
 import { getTranslations } from 'next-intl/server';
 import { DataTablePagination } from '@/app/components/dashboard/DataTablePagination';
 

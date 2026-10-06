@@ -31,7 +31,7 @@ import {
   FileQuestion,
   ExternalLink,
 } from 'lucide-react';
-import { deleteLesson } from '../../../features/instructor/curriculum-actions';
+import { deleteLesson } from '@/features/instructor/curriculum-actions';
 import { toast } from 'sonner';
 
 interface Lesson {

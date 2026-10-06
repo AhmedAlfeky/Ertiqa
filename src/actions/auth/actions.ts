@@ -34,8 +34,6 @@ export async function loginWithEmail(data: LoginInput, locale: string = 'ar'): P
   const { email, password } = validation.data;
   const supabase = await createClient();
 
-  console.log('🔐 Login attempt for:', email);
-
   const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
     email,
     password,
@@ -72,13 +70,6 @@ export async function loginWithEmail(data: LoginInput, locale: string = 'ar'): P
     };
   }
 
-  console.log('✅ User authenticated:', {
-    id: authData.user.id,
-    email: authData.user.email,
-    email_confirmed: !!authData.user.email_confirmed_at,
-    metadata: authData.user.user_metadata,
-  });
-
   // Check if email is confirmed
   if (!authData.user.email_confirmed_at) {
     console.warn('⚠️ Email not confirmed for:', email);
@@ -96,19 +87,8 @@ export async function loginWithEmail(data: LoginInput, locale: string = 'ar'): P
   const roleId = authData.user.user_metadata?.role_id || 
                  authData.user.app_metadata?.role_id || 
                  ROLE_IDS.STUDENT;
-  
-  console.log('📝 Role from metadata:', {
-    roleId,
-    metadata: authData.user.user_metadata,
-  });
 
   const redirectPath = ROLE_REDIRECTS[roleId] || '/student/dashboard';
-
-  console.log('🎯 Redirect decision:', {
-    roleId,
-    redirectPath,
-    fullUrl: `/${locale}${redirectPath}`,
-  });
 
   revalidatePath('/', 'layout');
   redirect(`/${locale}${redirectPath}`);
@@ -158,22 +138,8 @@ export async function signupWithEmail(data: SignupInput, locale: string = 'ar'):
   const { email, password, fullName, role, specialization, bio } = validation.data;
   const supabase = await createClient();
 
-  console.log('📝 Signup attempt:', {
-    email,
-    fullName,
-    role,
-    hasSpecialization: !!specialization,
-    hasBio: !!bio,
-  });
-
   // Determine role ID
   const roleId = role === 'INSTRUCTOR' ? ROLE_IDS.INSTRUCTOR : ROLE_IDS.STUDENT;
-
-  console.log('🎭 Role assignment:', {
-    selectedRole: role,
-    roleId,
-    ROLE_IDS,
-  });
 
   // Create auth user with metadata
   const { data: authData, error: authError } = await supabase.auth.signUp({
@@ -187,13 +153,6 @@ export async function signupWithEmail(data: SignupInput, locale: string = 'ar'):
         bio: bio || null,
       },
     },
-  });
-
-  console.log('📧 Supabase signup result:', {
-    success: !!authData.user,
-    userId: authData.user?.id,
-    error: authError?.message,
-    metadata: authData.user?.user_metadata,
   });
 
   if (authError) {
@@ -213,9 +172,6 @@ export async function signupWithEmail(data: SignupInput, locale: string = 'ar'):
       error: 'Failed to create account. Please try again.',
     };
   }
-
-  console.log('✅ Account created successfully for:', email);
-  console.log('📨 Verification email should be sent to:', email);
 
   // Email confirmation is enabled - user needs to verify email before logging in
   return {
@@ -245,8 +201,6 @@ export async function forgotPassword(data: ForgotPasswordInput, locale: string =
   const { email } = validation.data;
   const supabase = await createClient();
 
-  console.log('🔑 Password reset request for:', email);
-
   const origin = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
   const redirectTo = `${origin}/${locale}/auth/callback?type=recovery`;
 
@@ -261,8 +215,6 @@ export async function forgotPassword(data: ForgotPasswordInput, locale: string =
       error: error.message,
     };
   }
-
-  console.log('✅ Password reset email sent to:', email);
 
   return {
     success: true,
@@ -301,8 +253,6 @@ export async function resetPassword(data: ResetPasswordInput): Promise<AuthActio
     };
   }
 
-  console.log('🔐 Updating password for user:', session.user.email);
-
   const { error } = await supabase.auth.updateUser({
     password: password,
   });
@@ -314,8 +264,6 @@ export async function resetPassword(data: ResetPasswordInput): Promise<AuthActio
       error: error.message,
     };
   }
-
-  console.log('✅ Password updated successfully');
 
   return {
     success: true,

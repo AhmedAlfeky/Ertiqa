@@ -117,8 +117,6 @@ export async function middleware(request: NextRequest) {
       return response;
     }
 
-    console.log('🎯 Redirecting', user.email, 'role_id:', roleId, 'to:', redirectPath);
-
     const url = new URL(`/${locale}${redirectPath}`, origin);
     return NextResponse.redirect(url);
   }
@@ -144,9 +142,6 @@ export async function middleware(request: NextRequest) {
     if (matchingGuard) {
       const [, allowedRoles] = matchingGuard;
       if (!allowedRoles.includes(roleId)) {
-        console.log(
-          `🚫 Unauthorized access to ${pathWithoutLocale} for role ${roleId}. Redirecting...`
-        );
         const redirectPath =
           ROLE_REDIRECTS[roleId] || ROLE_REDIRECTS[ROLE_IDS.STUDENT];
         const url = new URL(`/${locale}${redirectPath}`, origin);

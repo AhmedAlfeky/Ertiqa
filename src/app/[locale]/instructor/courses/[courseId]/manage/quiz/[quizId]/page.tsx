@@ -6,7 +6,7 @@ import {
   getCurrentInstructorId,
 } from '@/features/instructor/queries';
 import { getQuizWithQuestions } from '@/features/instructor/curriculum-queries';
-import { QuizManageClient } from '@/app/components/instructor/QuizManageClient';
+import { QuizManageClient } from '@/features/instructor/components/QuizManageClient';
 import { createClient } from '@/lib/supabase/server';
 import { getTranslations } from 'next-intl/server';
 

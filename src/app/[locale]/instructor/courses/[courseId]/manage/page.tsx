@@ -5,7 +5,7 @@ import {
   getLookupData,
 } from '@/features/instructor/queries';
 import { getCourseUnits } from '@/features/instructor/curriculum-queries';
-import { CourseManageClient } from '@/app/components/instructor/CourseManageClient';
+import { CourseManageClient } from '@/features/instructor/components/CourseManageClient';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;

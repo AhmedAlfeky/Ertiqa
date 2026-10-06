@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { getAllInstructors, isAdmin } from '@/features/admin/queries';
-import { InstructorsTable } from '@/app/components/admin/InstructorsTable';
+import { InstructorsTable } from '@/features/admin/components/InstructorsTable';
 import { getTranslations } from 'next-intl/server';
 import { DataTablePagination } from '@/app/components/dashboard/DataTablePagination';
 

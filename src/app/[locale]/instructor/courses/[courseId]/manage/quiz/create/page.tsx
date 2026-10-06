@@ -6,7 +6,7 @@ import {
   getCurrentInstructorId,
 } from '@/features/instructor/queries';
 import { getCourseUnits } from '@/features/instructor/curriculum-queries';
-import { QuizCreateForm } from '@/app/components/instructor/QuizCreateForm';
+import { QuizCreateForm } from '@/features/instructor/components/QuizCreateForm';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';

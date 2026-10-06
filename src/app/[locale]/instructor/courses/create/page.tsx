@@ -1,5 +1,5 @@
 import { getTranslations } from 'next-intl/server';
-import { CourseForm } from '@/app/components/instructor/CourseForm';
+import { CourseForm } from '@/features/instructor/components/CourseForm';
 import { getLookupData } from '@/features/instructor/queries';
 
 export default async function CreateCoursePage({

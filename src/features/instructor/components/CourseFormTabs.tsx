@@ -7,7 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
-import FormInput from '@/app/components/form/FormInput';
+import FormInput from '@/components/form/FormInput';
 import { ImageUpload } from './ImageUpload';
 import { toast } from 'sonner';
 import {

@@ -9,7 +9,7 @@ import {
   getLessonById,
   getUnitById,
 } from '@/features/instructor/curriculum-queries';
-import { VideoLessonForm } from '@/app/components/instructor/VideoLessonForm';
+import { VideoLessonForm } from '@/features/instructor/components/VideoLessonForm';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';

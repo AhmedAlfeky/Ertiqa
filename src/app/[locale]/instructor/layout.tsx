@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { InstructorSidebar } from '@/app/components/instructor/InstructorSidebar';
+import { InstructorSidebar } from '@/features/instructor/components/InstructorSidebar';
 import { getCurrentInstructorId } from '@/features/instructor/queries';
 
 export default async function InstructorLayout({

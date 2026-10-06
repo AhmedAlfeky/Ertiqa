@@ -12,7 +12,7 @@ import { Form } from '@/components/ui/form';
 import { FcGoogle } from 'react-icons/fc';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import FormInput from '@/app/components/form/FormInput';
+import FormInput from '@/components/form/FormInput';
 import { Mail } from 'lucide-react';
 
 export default function LoginForm() {

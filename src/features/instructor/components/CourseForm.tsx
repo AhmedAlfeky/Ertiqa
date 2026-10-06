@@ -9,7 +9,7 @@ import { useTranslations } from 'next-intl';
 import { Form } from '@/components/ui/form';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { FormInput, FormImageUpload, FormSelect } from '@/app/components/form';
+import { FormInput, FormImageUpload, FormSelect } from '@/components/form';
 import {
   createCourseSchema,
   type CreateCourseInput,

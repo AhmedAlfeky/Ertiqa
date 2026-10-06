@@ -23,7 +23,7 @@ import { DeleteDialog } from './DeleteDialog';
 import {
   updateUnit,
   deleteUnit,
-} from '../../../features/instructor/curriculum-actions';
+} from '@/features/instructor/curriculum-actions';
 
 interface UnitManageClientProps {
   courseId: number;

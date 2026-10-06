@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation';
 import { SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar';
-import { AdminSidebar } from '@/app/components/admin/AdminSidebar';
+import { AdminSidebar } from '@/features/admin/components/AdminSidebar';
 import { isAdmin } from '@/features/admin/queries';
 import MaxWidthWrapper from '@/app/components/MaxwidthWrapper';
 

@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
-import FormInput from '@/app/components/form/FormInput';
+import FormInput from '@/components/form/FormInput';
 import { ArrowLeft } from 'lucide-react';
 import AuthLayout from '@/app/components/auth/AuthLayout';
 

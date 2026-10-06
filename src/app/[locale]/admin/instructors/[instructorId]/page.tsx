@@ -2,7 +2,7 @@ import { redirect, notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { getInstructorDetails, isAdmin } from '@/features/admin/queries';
-import { InstructorDetails } from '@/app/components/admin/InstructorDetails';
+import { InstructorDetails } from '@/features/admin/components/InstructorDetails';
 import { getTranslations } from 'next-intl/server';
 
 export const dynamic = 'force-dynamic';

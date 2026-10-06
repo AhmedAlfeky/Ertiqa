@@ -523,5 +523,32 @@
     "goToLastPage": "الانتقال إلى الصفحة الأخيرة",
     "previous": "السابق",
     "next": "التالي"
+  },
+  "student": {
+    "title": "تعليمي",
+    "subtitle": "تتبع تقدمك وواصل التعلم",
+    "enrolledCourses": "الدورات المسجل بها",
+    "enrolledCoursesDesc": "التسجيلات النشطة",
+    "inProgress": "قيد التقدم",
+    "inProgressDesc": "دورات قيد التقدم",
+    "completed": "المكتملة",
+    "completedDesc": "دورات مكتملة",
+    "certificates": "الشهادات",
+    "certificatesDesc": "الشهادات المكتسبة",
+    "continueLearning": "متابعة التعلم",
+    "continueLearningDesc": "تابع من حيث توقفت",
+    "noCourses": "لم تسجل في أي دورة بعد. تصفح دليل الدورات للبدء!",
+    "quickActions": "إجراءات سريعة",
+    "quickActionsDesc": "ماذا تريد أن تفعل؟",
+    "browseCourses": "تصفح الدورات",
+    "settings": "الإعدادات",
+    "achievements": "الإنجازات",
+    "achievementsDesc": "محطات تعلمك",
+    "achievementsNotice": "أكمل الدورات للحصول على الإنجازات والشهادات!"
+  },
+  "notFound": {
+    "title": "الصفحة غير موجودة",
+    "description": "تأكد من صحة الرابط أو الرجوع للصفحة الرئيسية",
+    "backHome": "العودة إلى الصفحة الرئيسية"
   }
 }

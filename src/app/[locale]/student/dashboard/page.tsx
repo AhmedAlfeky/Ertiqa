@@ -1,7 +1,9 @@
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Clock, TrendingUp, Award } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
+import Link from 'next/link';
 
 export default async function StudentDashboardPage({
   params,
@@ -9,6 +11,7 @@ export default async function StudentDashboardPage({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: 'student' });
   const supabase = await createClient();
   
   const { data: { user } } = await supabase.auth.getUser();
@@ -19,33 +22,33 @@ export default async function StudentDashboardPage({
 
   const stats = [
     {
-      title: 'Enrolled Courses',
+      title: t('enrolledCourses'),
       value: 0,
-      description: 'Active enrollments',
+      description: t('enrolledCoursesDesc'),
       icon: BookOpen,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100',
     },
     {
-      title: 'In Progress',
+      title: t('inProgress'),
       value: 0,
-      description: 'Courses in progress',
+      description: t('inProgressDesc'),
       icon: Clock,
       color: 'text-orange-600',
       bgColor: 'bg-orange-100',
     },
     {
-      title: 'Completed',
+      title: t('completed'),
       value: 0,
-      description: 'Courses completed',
+      description: t('completedDesc'),
       icon: TrendingUp,
       color: 'text-green-600',
       bgColor: 'bg-green-100',
     },
     {
-      title: 'Certificates',
+      title: t('certificates'),
       value: 0,
-      description: 'Earned certificates',
+      description: t('certificatesDesc'),
       icon: Award,
       color: 'text-purple-600',
       bgColor: 'bg-purple-100',
@@ -55,9 +58,9 @@ export default async function StudentDashboardPage({
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">My Learning</h1>
+        <h1 className="text-3xl font-bold tracking-tight">{t('title')}</h1>
         <p className="text-muted-foreground">
-          Track your progress and continue learning
+          {t('subtitle')}
         </p>
       </div>
 
@@ -87,12 +90,12 @@ export default async function StudentDashboardPage({
 
       <Card>
         <CardHeader>
-          <CardTitle>Continue Learning</CardTitle>
-          <CardDescription>Pick up where you left off</CardDescription>
+          <CardTitle>{t('continueLearning')}</CardTitle>
+          <CardDescription>{t('continueLearningDesc')}</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="text-muted-foreground text-center py-8">
-            No courses enrolled yet. Browse our catalog to get started!
+            {t('noCourses')}
           </p>
         </CardContent>
       </Card>
@@ -100,33 +103,33 @@ export default async function StudentDashboardPage({
       <div className="grid gap-4 md:grid-cols-2">
         <Card>
           <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>What would you like to do?</CardDescription>
+            <CardTitle>{t('quickActions')}</CardTitle>
+            <CardDescription>{t('quickActionsDesc')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
-            <a
+            <Link
               href={`/${locale}/courses`}
               className="block text-sm text-primary hover:underline"
             >
-              → Browse Courses
-            </a>
-            <a
+              → {t('browseCourses')}
+            </Link>
+            <Link
               href={`/${locale}/student/settings`}
               className="block text-sm text-primary hover:underline"
             >
-              → Settings
-            </a>
+              → {t('settings')}
+            </Link>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader>
-            <CardTitle>Achievements</CardTitle>
-            <CardDescription>Your learning milestones</CardDescription>
+            <CardTitle>{t('achievements')}</CardTitle>
+            <CardDescription>{t('achievementsDesc')}</CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-muted-foreground">
-              Complete courses to earn achievements and certificates!
+              {t('achievementsNotice')}
             </p>
           </CardContent>
         </Card>

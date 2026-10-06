@@ -473,5 +473,32 @@
     "goToLastPage": "Go to last page",
     "previous": "Previous",
     "next": "Next"
+  },
+  "student": {
+    "title": "My Learning",
+    "subtitle": "Track your progress and continue learning",
+    "enrolledCourses": "Enrolled Courses",
+    "enrolledCoursesDesc": "Active enrollments",
+    "inProgress": "In Progress",
+    "inProgressDesc": "Courses in progress",
+    "completed": "Completed",
+    "completedDesc": "Courses completed",
+    "certificates": "Certificates",
+    "certificatesDesc": "Earned certificates",
+    "continueLearning": "Continue Learning",
+    "continueLearningDesc": "Pick up where you left off",
+    "noCourses": "No courses enrolled yet. Browse our catalog to get started!",
+    "quickActions": "Quick Actions",
+    "quickActionsDesc": "What would you like to do?",
+    "browseCourses": "Browse Courses",
+    "settings": "Settings",
+    "achievements": "Achievements",
+    "achievementsDesc": "Your learning milestones",
+    "achievementsNotice": "Complete courses to earn achievements and certificates!"
+  },
+  "notFound": {
+    "title": "Page Not Found",
+    "description": "Check the URL or return to the homepage",
+    "backHome": "Back to Home"
   }
 }

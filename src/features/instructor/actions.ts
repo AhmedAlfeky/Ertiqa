@@ -4,7 +4,6 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 import { z } from 'zod';
 import * as schemas from './schemas';
-import * as newSchemas from './schemas_new';
 import type { ActionResult, UploadResult } from './types';
 import { getCurrentInstructorId, isInstructor } from './queries';
 import { SupabaseClient } from '@supabase/supabase-js';
@@ -171,16 +170,16 @@ async function assertLessonOwner(
 
 // 1. Create Course
 export async function createCourse(
-  input: newSchemas.CreateCourseInput,
+  input: schemas.CreateCourseInput,
   locale: string = 'ar'
 ) {
   // We manually parse here because of the locale logic in revalidate
-  const validation = newSchemas.createCourseSchema.safeParse(input);
+  const validation = schemas.createCourseSchema.safeParse(input);
   if (!validation.success)
     return { success: false, error: validation.error.issues[0].message };
 
   return createInstructorAction(
-    newSchemas.createCourseSchema,
+    schemas.createCourseSchema,
     async (data, { supabase, instructorId }) => {
       const slug = generateSlug(data.titleEn);
 

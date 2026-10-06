@@ -13,7 +13,7 @@ import { FormInput, FormImageUpload, FormSelect } from '@/components/form';
 import {
   createCourseSchema,
   type CreateCourseInput,
-} from '@/features/instructor/schemas_new';
+} from '@/features/instructor/schemas';
 import type {
   CourseWithDetails,
   Level,

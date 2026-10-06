@@ -14,6 +14,7 @@ interface FormInputProps {
   name: string;
   label?: string;
   placeholder?: string;
+  translationNamespace?: string;
   formType: "input" | "textarea" | "switch" | "phone";
   inputType?: "text" | "email" | "password" | "tel" | "number" | "url";
   disabled?: boolean;
@@ -29,6 +30,7 @@ const FormInput: React.FC<FormInputProps> = ({
   name,
   label,
   placeholder,
+  translationNamespace = "auth",
   formType,
   inputType = "text",
   disabled = false,
@@ -40,7 +42,8 @@ const FormInput: React.FC<FormInputProps> = ({
   serverError,
 }) => {
   const locale = useLocale();
-  const t = useTranslations("auth");
+  const t = useTranslations(translationNamespace as any);
+  const tAuth = useTranslations("auth");
   const isRTL = locale === "ar";
   const { control } = useFormContext();
   const [showPassword, setShowPassword] = useState(false);
@@ -78,7 +81,7 @@ const FormInput: React.FC<FormInputProps> = ({
                 className="absolute start-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 onClick={() => setShowPassword(!showPassword)}
                 disabled={disabled}
-                aria-label={showPassword ? t("hidePassword") : t("showPassword")}
+                aria-label={showPassword ? tAuth("hidePassword") : tAuth("showPassword")}
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>

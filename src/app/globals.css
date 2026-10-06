@@ -26,6 +26,22 @@ h3 {
   --color-platinum: #f0f0f0;
   --color-snow: #f8f8f8;
   --color-carbon: #1f1f1f;
+
+  /* Font Families - كلاسات الخطوط للمنصة في Tailwind CSS */
+  --font-cairo: var(--font-cairo), sans-serif;
+  --font-poppins: var(--font-poppins), sans-serif;
+  --font-orbitron: var(--font-orbitron), sans-serif;
+  --font-amiri: var(--font-amiri), serif;
+  --font-tajawal: var(--font-tajawal), sans-serif;
+  --font-changa: var(--font-changa), sans-serif;
+  --font-inter: var(--font-inter), sans-serif;
+  --font-roboto: var(--font-roboto), sans-serif;
+  --font-ge-ss-two: var(--font-ge-ss-two), sans-serif;
+  --font-ge-ss-tv: var(--font-ge-ss-tv), sans-serif;
+  --font-mateen: var(--font-mateen), sans-serif;
+  --font-mohanned: var(--font-mohanned), sans-serif;
+  --font-mothanna: var(--font-mothanna), sans-serif;
+  --font-arslan: var(--font-arslan), cursive;
 }
 
 @theme inline {

@@ -7,9 +7,9 @@ export default async function PublicLayout({
   params,
 }: {
   children: ReactNode;
-  params: { locale: string };
+  params: Promise<{ locale: string }>;
 }) {
-  const { locale } = params;
+  const { locale } = await params;
 
   return (
     <div className="bg-background text-foreground">

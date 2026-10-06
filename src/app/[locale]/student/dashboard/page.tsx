@@ -3,7 +3,7 @@ import { getTranslations } from 'next-intl/server';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { BookOpen, Clock, TrendingUp, Award } from 'lucide-react';
 import { createClient } from '@/lib/supabase/server';
-import Link from 'next/link';
+import { Link } from '@/i18n/navigation';
 
 export default async function StudentDashboardPage({
   params,
@@ -108,13 +108,13 @@ export default async function StudentDashboardPage({
           </CardHeader>
           <CardContent className="space-y-2">
             <Link
-              href={`/${locale}/courses`}
+              href="/courses"
               className="block text-sm text-primary hover:underline"
             >
               → {t('browseCourses')}
             </Link>
             <Link
-              href={`/${locale}/student/settings`}
+              href="/student/settings"
               className="block text-sm text-primary hover:underline"
             >
               → {t('settings')}

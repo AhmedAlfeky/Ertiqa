@@ -16,7 +16,6 @@ import localFont from 'next/font/local';
 // ============================================
 export const cairo = Cairo({
   subsets: ['arabic', 'latin'],
-  weight: ['200', '300', '400', '500', '600', '700', '800', '900'],
   display: 'swap',
   variable: '--font-cairo',
 });

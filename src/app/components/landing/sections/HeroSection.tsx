@@ -321,9 +321,9 @@ export function HeroSection({ locale, promoVideoUrl }: HeroSectionProps) {
         </MaxWidthWrapper>
       </div>
 
-      {/* Video Modal (Enlarged by 50% to max-w-[1344px] with IP Protection) */}
+      {/* Video Modal (Reduced by 25% to max-w-[1008px] with IP Protection) */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="sm:max-w-6xl xl:max-w-[1344px] w-[96vw] max-h-[94vh] p-2 sm:p-5 bg-slate-900/95 backdrop-blur-xl border-slate-800 text-white overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
+        <DialogContent className="sm:max-w-5xl xl:max-w-[1008px] w-[90vw] max-h-[90vh] p-2 sm:p-4 bg-slate-900/95 backdrop-blur-xl border-slate-800 text-white overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
           <DialogHeader className="px-3 pt-2 pb-1">
             <DialogTitle className="text-lg font-bold text-white flex flex-wrap items-center justify-between gap-3 w-full">
               <span className="flex items-center gap-2">
@@ -456,25 +456,25 @@ function WatermarkOverlay() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2 rounded-lg bg-black/60 backdrop-blur-md px-3 py-1.5 text-xs font-semibold text-white/95 border border-white/10 shadow-lg">
           <span className="w-2 h-2 rounded-full bg-gold-primary animate-pulse" />
-          <span>منصة ارتقاء التعليمية &bull; Ertiqa</span>
+          <span>منصة ارتقاء</span>
         </div>
         <div className="text-[11px] font-medium tracking-wide text-white/70 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/10 hidden sm:block">
-          &copy; محتوى محمي بحقوق الملكية الفكرية
+          &copy; منصة ارتقاء
         </div>
       </div>
 
       {/* Subtle Diagonal Central Watermark */}
-      <div className="self-center transform -rotate-12 select-none text-white/[0.07] text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-widest whitespace-nowrap pointer-events-none">
-        ERTIQA PLATFORM &bull; ارتقاء
+      <div className="self-center transform -rotate-12 select-none text-white/[0.08] text-2xl sm:text-4xl md:text-5xl font-black tracking-widest whitespace-nowrap pointer-events-none font-cairo">
+        منصة ارتقاء
       </div>
 
       {/* Bottom Protected Badge */}
       <div className="flex items-center justify-between text-[10px] text-white/60 tracking-wider">
-        <span className="bg-black/50 px-2 py-0.5 rounded backdrop-blur-xs">
-          يُمنع النسخ أو الاقتطاع دون إذن خطي
+        <span className="bg-black/50 px-2.5 py-1 rounded-md backdrop-blur-xs border border-white/5">
+          منصة ارتقاء &bull; جميع الحقوق محفوظة
         </span>
-        <span className="hidden sm:inline bg-black/50 px-2 py-0.5 rounded backdrop-blur-xs">
-          Digital Rights Protected
+        <span className="hidden sm:inline bg-black/50 px-2.5 py-1 rounded-md backdrop-blur-xs border border-white/5">
+          محتوى محمي
         </span>
       </div>
     </div>

@@ -13,6 +13,12 @@ import {
   ArrowLeft,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import LogoLoop from '@/components/LogoLoop';
 import MaxWidthWrapper from '@/app/components/MaxwidthWrapper';
@@ -43,9 +49,11 @@ const LOGOS = [
 
 interface HeroSectionProps {
   locale: string;
+  promoVideoUrl?: string | null;
 }
 
-export function HeroSection({ locale }: HeroSectionProps) {
+export function HeroSection({ locale, promoVideoUrl }: HeroSectionProps) {
+  const [isVideoOpen, setIsVideoOpen] = React.useState(false);
   const t = useTranslations('landing.hero');
   const currentLocale = useLocale();
   const isRTL = currentLocale === 'ar';
@@ -252,20 +260,33 @@ export function HeroSection({ locale }: HeroSectionProps) {
                 </div>
               </FloatingCard>
 
-              {/* --- Floating Badge 2: Live Class (Top Right) --- */}
+              {/* --- Floating Badge 2: Promo Video (Top Right) --- */}
               <FloatingCard
+                role="button"
+                tabIndex={0}
+                onClick={() => setIsVideoOpen(true)}
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setIsVideoOpen(true);
+                  }
+                }}
                 className={cn(
-                  'top-12 bg-orange-500 text-white',
+                  'top-12 bg-orange-500 text-white cursor-pointer hover:bg-orange-600 hover:scale-105 active:scale-95 transition-all shadow-lg select-none group',
                   isRTL ? '-left-6' : '-right-6'
                 )}
                 delay={1.2}
                 duration={5}
+                aria-label={t('liveClass')}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2.5">
                   <span className="relative flex h-3 w-3">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
                   </span>
+                  <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Play className="w-2.5 h-2.5 fill-white text-white ml-0.5" />
+                  </div>
                   <p className="text-xs font-bold uppercase tracking-wider">
                     {t('liveClass')}
                   </p>
@@ -298,22 +319,90 @@ export function HeroSection({ locale }: HeroSectionProps) {
           />
         </MaxWidthWrapper>
       </div>
+
+      {/* Video Modal */}
+      <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
+        <DialogContent className="max-w-4xl p-2 sm:p-4 bg-slate-900 border-slate-800 text-white overflow-hidden rounded-2xl">
+          <DialogHeader className="px-3 pt-2">
+            <DialogTitle className="text-lg font-bold text-white flex items-center gap-2">
+              <Play className="w-4 h-4 text-gold-primary fill-gold-primary" />
+              {t('liveClass')}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
+            {isVideoOpen && promoVideoUrl && (
+              <VideoEmbedPlayer url={promoVideoUrl} />
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </section>
   );
 }
 
 // --- Sub-components ---
 
-function FloatingCard({ children, className, delay = 0, duration = 6 }: any) {
+function VideoEmbedPlayer({ url }: { url: string }) {
+  if (!url) return null;
+
+  const ytMatch = url.match(
+    /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
+  );
+  if (ytMatch) {
+    return (
+      <iframe
+        src={`https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`}
+        title="Promo Video"
+        className="w-full h-full rounded-xl border-0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  }
+
+  const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vimeoMatch) {
+    return (
+      <iframe
+        src={`https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`}
+        title="Promo Video"
+        className="w-full h-full rounded-xl border-0"
+        allow="autoplay; fullscreen; picture-in-picture"
+        allowFullScreen
+      />
+    );
+  }
+
+  return (
+    <video
+      src={url}
+      controls
+      autoPlay
+      playsInline
+      className="w-full h-full object-contain rounded-xl bg-black"
+    />
+  );
+}
+
+function FloatingCard({
+  children,
+  className,
+  delay = 0,
+  duration = 6,
+  onClick,
+  ...props
+}: any) {
   return (
     <motion.div
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay, duration: 0.5 }}
+      onClick={onClick}
       className={cn(
         'absolute p-3 pr-5 rounded-2xl shadow-[0_15px_30px_rgba(0,0,0,0.1)] flex items-center gap-3 z-20',
         className
       )}
+      {...props}
     >
       <motion.div
         animate={{ y: [0, -10, 0] }}

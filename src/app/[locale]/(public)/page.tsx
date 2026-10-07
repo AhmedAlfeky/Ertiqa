@@ -3,6 +3,7 @@ import {
   getFeaturedInstructors,
   getTestimonials,
   getCategoriesWithCounts,
+  getHeroPromoVideo,
 } from '@/features/public/queries';
 import { HeroSection } from '@/app/components/landing/sections/HeroSection';
 import { WhyChooseUsSection } from '@/app/components/landing/sections/WhyChooseUsSection';
@@ -19,16 +20,18 @@ export default async function LandingPage({
 }) {
   const { locale } = await params;
 
-  const [courses, instructors, testimonials, categories] = await Promise.all([
-    getFeaturedCourses(locale, 6),
-    getFeaturedInstructors(10),
-    getTestimonials(6),
-    getCategoriesWithCounts(locale),
-  ]);
-  console.log(categories);
+  const [courses, instructors, testimonials, categories, promoVideoUrl] =
+    await Promise.all([
+      getFeaturedCourses(locale, 6),
+      getFeaturedInstructors(10),
+      getTestimonials(6),
+      getCategoriesWithCounts(locale),
+      getHeroPromoVideo(),
+    ]);
+
   return (
     <div className="space-y-0">
-      <HeroSection locale={locale} />
+      <HeroSection locale={locale} promoVideoUrl={promoVideoUrl} />
       <WhyChooseUsSection />
       <CourseCategorySection categories={categories} locale={locale} />
       <FeaturedCoursesSection courses={courses} locale={locale} />

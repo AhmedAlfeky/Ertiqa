@@ -459,3 +459,45 @@ export async function checkEnrollment(userId: string | null, courseId: number) {
 
   return (count || 0) > 0;
 }
+
+const FALLBACK_PROMO_VIDEO =
+  'https://videos.pexels.com/video-files/3045163/3045163-hd_1920_1080_30fps.mp4';
+
+export async function getHeroPromoVideo(): Promise<string> {
+  try {
+    const supabase = await createClient();
+
+    // 1. Try to find a published course with a promo_video_url
+    const { data: courses, error: courseError } = await supabase
+      .from('v_courses_full')
+      .select('promo_video_url')
+      .eq('is_published', true)
+      .not('promo_video_url', 'is', null)
+      .limit(1);
+
+    const firstPromo = (courses as Array<{ promo_video_url?: string | null }> | null)?.[0]
+      ?.promo_video_url;
+    if (!courseError && firstPromo && firstPromo.trim()) {
+      return firstPromo.trim();
+    }
+
+    // 2. Fallback to any lesson with video_url
+    const { data: lessons, error: lessonError } = await supabase
+      .from('lessons')
+      .select('video_url')
+      .eq('lesson_type', 'video')
+      .not('video_url', 'is', null)
+      .limit(1);
+
+    const firstLesson = (lessons as Array<{ video_url?: string | null }> | null)?.[0]
+      ?.video_url;
+    if (!lessonError && firstLesson && firstLesson.trim()) {
+      return firstLesson.trim();
+    }
+  } catch (error) {
+    console.error('Error fetching hero promo video:', error);
+  }
+
+  return FALLBACK_PROMO_VIDEO;
+}
+

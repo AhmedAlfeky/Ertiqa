@@ -452,16 +452,7 @@ function WatermarkOverlay() {
       className="pointer-events-none select-none absolute inset-0 z-20 flex flex-col justify-between p-3 sm:p-5 opacity-70 overflow-hidden"
       aria-hidden="true"
     >
-      {/* Top Banner Watermark */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 rounded-lg bg-black/60 backdrop-blur-md px-3 py-1.5 text-xs font-semibold text-white/95 border border-white/10 shadow-lg">
-          <span className="w-2 h-2 rounded-full bg-gold-primary animate-pulse" />
-          <span>منصة ارتقاء</span>
-        </div>
-        <div className="text-[11px] font-medium tracking-wide text-white/70 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/10 hidden sm:block">
-          &copy; منصة ارتقاء
-        </div>
-      </div>
+      <div />
 
       {/* Subtle Diagonal Central Watermark */}
       <div className="self-center transform -rotate-12 select-none text-white/[0.08] text-2xl sm:text-4xl md:text-5xl font-black tracking-widest whitespace-nowrap pointer-events-none font-cairo">

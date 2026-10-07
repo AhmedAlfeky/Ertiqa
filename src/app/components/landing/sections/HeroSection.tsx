@@ -11,6 +11,7 @@ import {
   CheckCircle2,
   ArrowRight,
   ArrowLeft,
+  ShieldCheck,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
@@ -320,16 +321,26 @@ export function HeroSection({ locale, promoVideoUrl }: HeroSectionProps) {
         </MaxWidthWrapper>
       </div>
 
-      {/* Video Modal */}
+      {/* Video Modal (Enlarged by 50% to max-w-[1344px] with IP Protection) */}
       <Dialog open={isVideoOpen} onOpenChange={setIsVideoOpen}>
-        <DialogContent className="max-w-4xl p-2 sm:p-4 bg-slate-900 border-slate-800 text-white overflow-hidden rounded-2xl">
-          <DialogHeader className="px-3 pt-2">
-            <DialogTitle className="text-lg font-bold text-white flex items-center gap-2">
-              <Play className="w-4 h-4 text-gold-primary fill-gold-primary" />
-              {t('liveClass')}
+        <DialogContent className="sm:max-w-6xl xl:max-w-[1344px] w-[96vw] max-h-[94vh] p-2 sm:p-5 bg-slate-900/95 backdrop-blur-xl border-slate-800 text-white overflow-hidden rounded-2xl sm:rounded-3xl shadow-2xl">
+          <DialogHeader className="px-3 pt-2 pb-1">
+            <DialogTitle className="text-lg font-bold text-white flex flex-wrap items-center justify-between gap-3 w-full">
+              <span className="flex items-center gap-2">
+                <Play className="w-4 h-4 text-gold-primary fill-gold-primary" />
+                {t('liveClass')}
+              </span>
+              <span className="text-xs font-normal text-slate-400 flex items-center gap-1.5 mr-6 rtl:mr-0 rtl:ml-6 bg-slate-800/80 px-2.5 py-1 rounded-full border border-slate-700/50">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                محتوى محمي بحقوق الملكية الفكرية
+              </span>
             </DialogTitle>
           </DialogHeader>
-          <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black">
+          <div
+            className="relative aspect-video w-full overflow-hidden rounded-xl sm:rounded-2xl bg-black select-none shadow-inner"
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
+          >
             {isVideoOpen && promoVideoUrl && (
               <VideoEmbedPlayer url={promoVideoUrl} />
             )}
@@ -345,42 +356,128 @@ export function HeroSection({ locale, promoVideoUrl }: HeroSectionProps) {
 function VideoEmbedPlayer({ url }: { url: string }) {
   if (!url) return null;
 
+  // 1. Bunny.net Stream detection (UUID or CDN path)
+  const bunnyMatch =
+    url.match(/\/([a-f0-9-]{36})\//) || url.match(/b-cdn\.net\/([a-f0-9-]{36})/);
+  if (bunnyMatch) {
+    const videoId = bunnyMatch[1];
+    const libraryId = process.env.NEXT_PUBLIC_BUNNY_LIBRARY_ID || '554357';
+    return (
+      <div
+        className="relative w-full h-full select-none"
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <iframe
+          src={`https://player.mediadelivery.net/embed/${libraryId}/${videoId}?autoplay=true&loop=false&muted=false&preload=true&responsive=true`}
+          loading="lazy"
+          title="Promo Video"
+          className="border-0 w-full h-full rounded-xl sm:rounded-2xl"
+          allow="accelerometer;gyroscope;autoplay;encrypted-media;picture-in-picture;"
+          allowFullScreen
+        />
+        <WatermarkOverlay />
+      </div>
+    );
+  }
+
+  // 2. YouTube
   const ytMatch = url.match(
     /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/
   );
   if (ytMatch) {
     return (
-      <iframe
-        src={`https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1`}
-        title="Promo Video"
-        className="w-full h-full rounded-xl border-0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-        allowFullScreen
-      />
+      <div
+        className="relative w-full h-full select-none"
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <iframe
+          src={`https://www.youtube.com/embed/${ytMatch[1]}?autoplay=1&rel=0&modestbranding=1`}
+          title="Promo Video"
+          className="w-full h-full rounded-xl sm:rounded-2xl border-0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+        />
+        <WatermarkOverlay />
+      </div>
     );
   }
 
+  // 3. Vimeo
   const vimeoMatch = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vimeoMatch) {
     return (
-      <iframe
-        src={`https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`}
-        title="Promo Video"
-        className="w-full h-full rounded-xl border-0"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowFullScreen
-      />
+      <div
+        className="relative w-full h-full select-none"
+        onContextMenu={(e) => e.preventDefault()}
+      >
+        <iframe
+          src={`https://player.vimeo.com/video/${vimeoMatch[1]}?autoplay=1`}
+          title="Promo Video"
+          className="w-full h-full rounded-xl sm:rounded-2xl border-0"
+          allow="autoplay; fullscreen; picture-in-picture"
+          allowFullScreen
+        />
+        <WatermarkOverlay />
+      </div>
     );
   }
 
+  // 4. Direct HTML5 Video with Full Protection Controls
   return (
-    <video
-      src={url}
-      controls
-      autoPlay
-      playsInline
-      className="w-full h-full object-contain rounded-xl bg-black"
-    />
+    <div
+      className="relative w-full h-full select-none"
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
+    >
+      <video
+        src={url}
+        controls
+        autoPlay
+        playsInline
+        controlsList="nodownload noplaybackrate"
+        disablePictureInPicture
+        disableRemotePlayback
+        onContextMenu={(e) => e.preventDefault()}
+        onDragStart={(e) => e.preventDefault()}
+        className="w-full h-full object-contain rounded-xl sm:rounded-2xl bg-black select-none pointer-events-auto"
+      />
+      <WatermarkOverlay />
+    </div>
+  );
+}
+
+function WatermarkOverlay() {
+  return (
+    <div
+      className="pointer-events-none select-none absolute inset-0 z-20 flex flex-col justify-between p-3 sm:p-5 opacity-70 overflow-hidden"
+      aria-hidden="true"
+    >
+      {/* Top Banner Watermark */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 rounded-lg bg-black/60 backdrop-blur-md px-3 py-1.5 text-xs font-semibold text-white/95 border border-white/10 shadow-lg">
+          <span className="w-2 h-2 rounded-full bg-gold-primary animate-pulse" />
+          <span>منصة ارتقاء التعليمية &bull; Ertiqa</span>
+        </div>
+        <div className="text-[11px] font-medium tracking-wide text-white/70 bg-black/50 backdrop-blur-xs px-2.5 py-1 rounded-md border border-white/10 hidden sm:block">
+          &copy; محتوى محمي بحقوق الملكية الفكرية
+        </div>
+      </div>
+
+      {/* Subtle Diagonal Central Watermark */}
+      <div className="self-center transform -rotate-12 select-none text-white/[0.07] text-2xl sm:text-4xl md:text-5xl font-black uppercase tracking-widest whitespace-nowrap pointer-events-none">
+        ERTIQA PLATFORM &bull; ارتقاء
+      </div>
+
+      {/* Bottom Protected Badge */}
+      <div className="flex items-center justify-between text-[10px] text-white/60 tracking-wider">
+        <span className="bg-black/50 px-2 py-0.5 rounded backdrop-blur-xs">
+          يُمنع النسخ أو الاقتطاع دون إذن خطي
+        </span>
+        <span className="hidden sm:inline bg-black/50 px-2 py-0.5 rounded backdrop-blur-xs">
+          Digital Rights Protected
+        </span>
+      </div>
+    </div>
   );
 }
 

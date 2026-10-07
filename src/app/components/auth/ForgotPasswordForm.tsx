@@ -12,11 +12,13 @@ import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/navigation';
 import FormInput from '@/components/form/FormInput';
 import { ArrowLeft } from 'lucide-react';
+import { formatAuthErrorMessage } from '@/lib/auth-errors';
 
 export default function ForgotPasswordForm() {
   const t = useTranslations('auth');
   const params = useParams();
   const locale = (params.locale as string) || 'ar';
+  const isAr = locale !== 'en';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -36,14 +38,23 @@ export default function ForgotPasswordForm() {
     try {
       const result = await forgotPassword(data, locale);
       if (result.success) {
-        setSuccess(result.data?.message || 'Password reset link sent!');
+        setSuccess(
+          result.data?.message ||
+            (isAr
+              ? 'تم إرسال رابط إعادة تعيين كلمة المرور!'
+              : 'Password reset link sent!')
+        );
         form.reset();
       } else {
-        setError(result.error || 'Failed to send reset link');
+        setError(
+          result.error
+            ? formatAuthErrorMessage(result.error, locale)
+            : (isAr ? 'فشل إرسال رابط الاستعادة' : 'Failed to send reset link')
+        );
       }
       setIsLoading(false);
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }

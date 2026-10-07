@@ -14,11 +14,13 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { GraduationCap, Users } from 'lucide-react';
 import FormInput from '@/components/form/FormInput';
+import { formatAuthErrorMessage } from '@/lib/auth-errors';
 
 export default function RoleBasedSignupForm() {
   const t = useTranslations('auth');
   const params = useParams();
   const locale = (params.locale as string) || 'ar';
+  const isAr = locale !== 'en';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -48,14 +50,21 @@ export default function RoleBasedSignupForm() {
     try {
       const result = await signupWithEmail(submitData, locale);
       if (result.success) {
-        setSuccess(result.data?.message || 'Account created successfully!');
+        setSuccess(
+          result.data?.message ||
+            (isAr ? 'تم إنشاء الحساب بنجاح!' : 'Account created successfully!')
+        );
         form.reset();
       } else {
-        setError(result.error || 'Signup failed');
+        setError(
+          result.error
+            ? formatAuthErrorMessage(result.error, locale)
+            : (isAr ? 'فشل إنشاء الحساب' : 'Signup failed')
+        );
       }
       setIsLoading(false);
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }
@@ -65,7 +74,7 @@ export default function RoleBasedSignupForm() {
     try {
       await loginWithGoogle(locale, selectedRole);
     } catch (err: any) {
-      setError(err.message || 'Failed to initiate Google sign up');
+      setError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }

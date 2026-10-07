@@ -33,7 +33,7 @@ export const signupSchema = z.object({
     .regex(/[0-9]/, 'Password must contain at least one number'),
   confirmPassword: z.string(),
   role: z.enum(['STUDENT', 'INSTRUCTOR'], {
-    errorMap: () => ({ message: 'Please select a valid role' }),
+    message: 'Please select a valid role',
   }),
   specialization: z.string().optional(),
   bio: z.string().optional(),

@@ -86,3 +86,8 @@ export interface UserWithRole {
   role: SecRole;
   isInstructor: boolean;
 }
+
+export interface RoleData {
+  role_id: number;
+  role_name: string;
+}

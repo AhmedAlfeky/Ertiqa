@@ -11,6 +11,7 @@ import { Form } from '@/components/ui/form';
 import { useTranslations } from 'next-intl';
 import FormInput from '@/components/form/FormInput';
 import { createClient } from '@/lib/supabase/client';
+import { formatAuthErrorMessage } from '@/lib/auth-errors';
 
 export default function ResetPasswordForm() {
   const t = useTranslations('auth');
@@ -18,6 +19,7 @@ export default function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const locale = (params.locale as string) || 'ar';
+  const isAr = locale !== 'en';
   const [isLoading, setIsLoading] = useState(false);
   const [formError, setFormError] = useState('');
   const [sessionError, setSessionError] = useState('');
@@ -42,24 +44,36 @@ export default function ResetPasswordForm() {
         try {
           const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
           if (exchangeError) {
-            setSessionError('Invalid or expired reset link. Please request a new one.');
+            setSessionError(
+              formatAuthErrorMessage(
+                exchangeError,
+                locale
+              ) ||
+                (isAr
+                  ? 'رابط إعادة التعيين غير صالح أو منتهي الصلاحية. يرجى طلب رابط جديد.'
+                  : 'Invalid or expired reset link. Please request a new one.')
+            );
             setSessionValid(false);
           } else {
             setSessionValid(true);
           }
         } catch (err: any) {
-          setSessionError('Failed to validate reset link.');
+          setSessionError(formatAuthErrorMessage(err, locale));
           setSessionValid(false);
         }
       } else {
-        setSessionError('No reset code provided. Please use the link from your email.');
+        setSessionError(
+          isAr
+            ? 'لم يتم توفير رمز إعادة التعيين. يرجى استخدام الرابط المرسل إلى بريدك.'
+            : 'No reset code provided. Please use the link from your email.'
+        );
         setSessionValid(false);
       }
       setIsValidatingSession(false);
     };
 
     exchangeCodeForSession();
-  }, [searchParams]);
+  }, [searchParams, locale, isAr]);
 
   async function onSubmit(data: ResetPasswordInput) {
     setIsLoading(true);
@@ -67,20 +81,29 @@ export default function ResetPasswordForm() {
     setSuccess('');
 
     try {
-      const result = await resetPassword(data);
+      const result = await resetPassword(data, locale);
       if (result.success) {
-        setSuccess(result.data?.message || 'Password updated successfully!');
+        setSuccess(
+          result.data?.message ||
+            (isAr
+              ? 'تم تحديث كلمة المرور بنجاح!'
+              : 'Password updated successfully!')
+        );
         form.reset();
         
         setTimeout(() => {
           router.push(`/${locale}/login`);
         }, 2000);
       } else {
-        setFormError(result.error || 'Failed to update password');
+        setFormError(
+          result.error
+            ? formatAuthErrorMessage(result.error, locale)
+            : (isAr ? 'فشل تحديث كلمة المرور' : 'Failed to update password')
+        );
       }
       setIsLoading(false);
     } catch (err: any) {
-      setFormError(err.message || 'An error occurred');
+      setFormError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }

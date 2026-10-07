@@ -14,11 +14,13 @@ import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import FormInput from '@/components/form/FormInput';
 import { Mail } from 'lucide-react';
+import { formatAuthErrorMessage } from '@/lib/auth-errors';
 
 export default function LoginForm() {
   const t = useTranslations('auth');
   const params = useParams();
   const locale = (params.locale as string) || 'ar';
+  const isAr = locale !== 'en';
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [needsVerification, setNeedsVerification] = useState(false);
@@ -42,7 +44,11 @@ export default function LoginForm() {
     try {
       const result = await loginWithEmail(data, locale);
       if (!result.success) {
-        setError(result.error || 'Login failed');
+        setError(
+          result.error
+            ? formatAuthErrorMessage(result.error, locale)
+            : (isAr ? 'فشل تسجيل الدخول' : 'Login failed')
+        );
         
         // Check if user needs email verification
         if (result.data?.needsEmailVerification) {
@@ -53,7 +59,7 @@ export default function LoginForm() {
         setIsLoading(false);
       }
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }
@@ -64,16 +70,23 @@ export default function LoginForm() {
     setError('');
 
     try {
-      const result = await resendVerificationEmail(userEmail);
+      const result = await resendVerificationEmail(userEmail, locale);
       if (result.success) {
-        setResendSuccess(result.data?.message || 'Verification email sent!');
+        setResendSuccess(
+          result.data?.message ||
+            (isAr ? 'تم إرسال بريد التحقق بنجاح!' : 'Verification email sent!')
+        );
         setNeedsVerification(false);
       } else {
-        setError(result.error || 'Failed to send verification email');
+        setError(
+          result.error
+            ? formatAuthErrorMessage(result.error, locale)
+            : (isAr ? 'فشل إرسال بريد التحقق' : 'Failed to send verification email')
+        );
       }
       setIsLoading(false);
     } catch (err: any) {
-      setError(err.message || 'An error occurred');
+      setError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }
@@ -83,7 +96,7 @@ export default function LoginForm() {
     try {
       await loginWithGoogle(locale);
     } catch (err: any) {
-      setError(err.message || 'Failed to initiate Google login');
+      setError(formatAuthErrorMessage(err, locale));
       setIsLoading(false);
     }
   }
